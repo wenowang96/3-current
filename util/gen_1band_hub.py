@@ -58,7 +58,7 @@ def create_1(filename=None, overwrite=False, seed=None,
              nflux=0,
              n_delay=16, n_matmul=8, n_sweep_warm=200, n_sweep_meas=2000,
              period_eqlt=8, period_uneqlt=0,
-             meas_bond_corr=1, meas_energy_corr=0, meas_nematic_corr=0,
+             meas_bond_corr=0, meas_3curr=0,  meas_energy_corr=0, meas_nematic_corr=0,
              trans_sym=1):
     assert L % n_matmul == 0 and L % period_eqlt == 0
     N = Nx * Ny
@@ -150,6 +150,33 @@ def create_1(filename=None, overwrite=False, seed=None,
                     map_bb[j + N*jb, i + N*ib] = kk
                     degen_bb[kk] += 1
     assert num_bb == map_bb.max() + 1
+
+
+    # 3 bond mapping
+    num_bbb = bps*bps*bps*N*N
+    map_bbb = np.zeros((num_b, num_b, num_b), dtype=np.int32)
+    degen_bbb = np.zeros(num_bbb, dtype = np.int32)
+    for jy in range(Ny):
+        for jx in range(Nx):
+            j = jx + Nx*jy
+            for i1y in range(Ny):
+                for i1x in range(Nx):
+                    i1 = i1x + Nx*i1y
+                    d1y = (i1y - jy) % Ny
+                    d1x = (i1x - jx) % Nx
+                    d1 = d1x + Nx*d1y
+                    for i2y in range(Ny):
+                        for i2x in range(Nx):
+                            i2 = i2x + Nx*i2y
+                            d2y = (i2y - jy) % Ny
+                            d2x = (i2x - jx) % Nx
+                            d2 = d2x + Nx*d2y
+                            for jj in range(bps):
+                                for ii1 in range(bps):
+                                    for ii2 in range(bps):
+                                        dd =  d2 + N*d1 + N*N*(ii2 + bps*ii1 + bps*bps*jj)
+                                        map_bbb[j + N*jj, i1 + N*ii1, i2 + N*ii2] = dd
+                                        degen_bbb[dd] += 1
 
     # hopping (assuming periodic boundaries and no field)
     tij = np.zeros((Ny*Nx, Ny*Nx), dtype=np.complex)
@@ -249,6 +276,7 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["bonds"] = bonds
         f["params"]["map_bs"] = map_bs
         f["params"]["map_bb"] = map_bb
+        f["params"]["map_bbb"] = map_bbb
         f["params"]["peierlsu"] = peierls
         f["params"]["peierlsd"] = peierls
         f["params"]["Ku"] = Ku
@@ -264,6 +292,7 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["period_eqlt"] = np.array(period_eqlt, dtype=np.int32)
         f["params"]["period_uneqlt"] = np.array(period_uneqlt, dtype=np.int32)
         f["params"]["meas_bond_corr"] = meas_bond_corr
+        f["params"]["meas_3curr"] = meas_3curr
         f["params"]["meas_energy_corr"] = meas_energy_corr
         f["params"]["meas_nematic_corr"] = meas_nematic_corr
         f["params"]["init_rng"] = init_rng  # save if need to replicate data
@@ -274,10 +303,12 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["num_b"] = num_b
         f["params"]["num_bs"] = num_bs
         f["params"]["num_bb"] = num_bb
+        f["params"]["num_bbb"] = num_bbb
         f["params"]["degen_i"] = degen_i
         f["params"]["degen_ij"] = degen_ij
         f["params"]["degen_bs"] = degen_bs
         f["params"]["degen_bb"] = degen_bb
+        f["params"]["degen_bbb"] = degen_bbb
         f["params"]["exp_Ku"] = exp_Ku
         f["params"]["exp_Kd"] = exp_Kd
         f["params"]["inv_exp_Ku"] = inv_exp_Ku
@@ -339,6 +370,8 @@ def create_1(filename=None, overwrite=False, seed=None,
             if meas_nematic_corr:
                 f["meas_uneqlt"]["nem_nnnn"] = np.zeros(num_bb*L, dtype=dtype_num)
                 f["meas_uneqlt"]["nem_ssss"] = np.zeros(num_bb*L, dtype=dtype_num)
+            if meas_3curr:
+                 f["meas_uneqlt"]["jjj"] = np.zeros(num_bbb*L, dtype=np.float64)
     return filename
 
 
