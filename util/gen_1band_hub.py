@@ -58,7 +58,7 @@ def create_1(filename=None, overwrite=False, seed=None,
              nflux=0,
              n_delay=16, n_matmul=8, n_sweep_warm=200, n_sweep_meas=2000,
              period_eqlt=8, period_uneqlt=0,
-             meas_bond_corr=0, meas_3curr=0,  meas_energy_corr=0, meas_nematic_corr=0,
+             meas_bond_corr=0, meas_3curr=0, meas_3curr_limit=0, meas_energy_corr=0, meas_nematic_corr=0,
              trans_sym=1):
     assert L % n_matmul == 0 and L % period_eqlt == 0
     N = Nx * Ny
@@ -326,6 +326,7 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["period_uneqlt"] = np.array(period_uneqlt, dtype=np.int32)
         f["params"]["meas_bond_corr"] = meas_bond_corr
         f["params"]["meas_3curr"] = meas_3curr
+        f["params"]["meas_3curr_limit"] = meas_3curr_limit
         f["params"]["meas_energy_corr"] = meas_energy_corr
         f["params"]["meas_nematic_corr"] = meas_nematic_corr
         f["params"]["init_rng"] = init_rng  # save if need to replicate data
