@@ -5,6 +5,7 @@ import time
 import h5py
 import numpy as np
 from scipy.linalg import expm
+from scipy.interpolate import CubicSpline
 
 np.seterr(over="ignore")
 
@@ -209,6 +210,16 @@ def create_1(filename=None, overwrite=False, seed=None,
                                             degen_bbb_lim[dd_lim] += 1
                                         else:
                                             map_bbb_lim[j + N*jj, i1 + N*ii1, i2 + N*ii2] = -1
+                                            
+    # intergral kernel  --to implement (Cubic spline fit+integral) with discrete imaginary time
+    integral_kernel = np.array([0],dtype=np.float64)
+    kernel = CubicSpline(np.arange(L+1), np.identity(L+1)).integrate(0, L)
+    integral_kernel = np.hstack((integral_kernel,kernel))
+    for i in np.arange(L-1):
+        kernel1 = CubicSpline(np.arange(i+2), np.identity(i+2)).integrate(0, i+1)
+        kernel2 = CubicSpline(np.arange(L-i), np.identity(L-i)).integrate(0, L-i-1)
+        kernel =  np.hstack((kernel1,kernel2))
+        integral_kernel = np.vstack((integral_kernel,kernel))
 
     # hopping (assuming periodic boundaries and no field)
     tij = np.zeros((Ny*Nx, Ny*Nx), dtype=np.complex)
@@ -310,6 +321,7 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["map_bb"] = map_bb
         f["params"]["map_bbb"] = map_bbb
         f["params"]["map_bbb_lim"] = map_bbb_lim
+        f["params"]["integral_kernel"] = integral_kernel
         f["params"]["peierlsu"] = peierls
         f["params"]["peierlsd"] = peierls
         f["params"]["Ku"] = Ku
