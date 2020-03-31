@@ -177,6 +177,38 @@ def create_1(filename=None, overwrite=False, seed=None,
                                         dd =  d2 + N*d1 + N*N*(ii2 + bps*ii1 + bps*bps*jj)
                                         map_bbb[j + N*jj, i1 + N*ii1, i2 + N*ii2] = dd
                                         degen_bbb[dd] += 1
+    
+    # limited 3 bond mapping for ruling out some unnecessary measurements.
+    # Notice that this can only be used for (bps=2) where no t' appears.
+    num_bbb_lim = bps*N*N
+    map_bbb_lim = np.zeros((num_b, num_b, num_b), dtype=np.int32)
+    degen_bbb_lim = np.zeros(num_bbb_lim, dtype = np.int32)
+    for jy in range(Ny):
+        for jx in range(Nx):
+            j = jx + Nx*jy
+            for i1y in range(Ny):
+                for i1x in range(Nx):
+                    i1 = i1x + Nx*i1y
+                    d1y = (i1y - jy) % Ny
+                    d1x = (i1x - jx) % Nx
+                    d1 = d1x + Nx*d1y
+                    for i2y in range(Ny):
+                        for i2x in range(Nx):
+                            i2 = i2x + Nx*i2y
+                            d2y = (i2y - jy) % Ny
+                            d2x = (i2x - jx) % Nx
+                            d2 = d2x + Nx*d2y
+                            for jj in range(bps):
+                                for ii1 in range(bps):
+                                    for ii2 in range(bps):
+                                        dd_lim =  d2 + N*d1 + N*N*jj
+                                        # Comparing the following with the original mapping, 
+                                        # we found out that, here we actually simply rule out unnecesarry bond-bond-bond types.
+                                        if (ii1 != jj) and (ii2 != jj):
+                                            map_bbb_lim[j + N*jj, i1 + N*ii1, i2 + N*ii2] = dd_lim
+                                            degen_bbb_lim[dd_lim] += 1
+                                        else:
+                                            map_bbb_lim[j + N*jj, i1 + N*ii1, i2 + N*ii2] = -1
 
     # hopping (assuming periodic boundaries and no field)
     tij = np.zeros((Ny*Nx, Ny*Nx), dtype=np.complex)
