@@ -309,6 +309,7 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["map_bs"] = map_bs
         f["params"]["map_bb"] = map_bb
         f["params"]["map_bbb"] = map_bbb
+        f["params"]["map_bbb_lim"] = map_bbb_lim
         f["params"]["peierlsu"] = peierls
         f["params"]["peierlsd"] = peierls
         f["params"]["Ku"] = Ku
@@ -336,11 +337,13 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["num_bs"] = num_bs
         f["params"]["num_bb"] = num_bb
         f["params"]["num_bbb"] = num_bbb
+        f["params"]["num_bbb_lim"] = num_bbb_lim
         f["params"]["degen_i"] = degen_i
         f["params"]["degen_ij"] = degen_ij
         f["params"]["degen_bs"] = degen_bs
         f["params"]["degen_bb"] = degen_bb
         f["params"]["degen_bbb"] = degen_bbb
+        f["params"]["degen_bbb_lim"] = degen_bbb_lim
         f["params"]["exp_Ku"] = exp_Ku
         f["params"]["exp_Kd"] = exp_Kd
         f["params"]["inv_exp_Ku"] = inv_exp_Ku
@@ -404,6 +407,8 @@ def create_1(filename=None, overwrite=False, seed=None,
                 f["meas_uneqlt"]["nem_ssss"] = np.zeros(num_bb*L, dtype=dtype_num)
             if meas_3curr:
                  f["meas_uneqlt"]["jjj"] = np.zeros(num_bbb*L, dtype=np.float64)
+            if meas_3curr_limit:
+                 f["meas_uneqlt"]["jjj_l"] = np.zeros(num_bbb_limit*L, dtype=np.float64)
     return filename
 
 
