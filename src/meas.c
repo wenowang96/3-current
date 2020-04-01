@@ -1172,8 +1172,9 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
         if (meas_3curr_limit)
 	#pragma omp parallel for
 	for (int t = 0; t < L; t++) {
-		num factor1 = 1.0;
+                num factor1 = 1.0;
 		num factor2 = 1.0;
+                num factor3 = 1.0;
                 const int delta_t = (t == 0);
 		const num *const restrict Gu0t_t = Gu + N*N*(0+L*t);
 		const num *const restrict Gutt_t = Gu + N*N*(t+L*t);
@@ -1209,14 +1210,22 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
 		const int bbb1 = p->map_bbb_lim[b2 + b1*num_b + c*num_b*num_b];
                 const int bbb2 = p->map_bbb_lim[b1 + b2*num_b + c*num_b*num_b];
 		const int bbb3 = p->map_bbb_lim[b2 + c*num_b + b1*num_b*num_b];
+                // If none of the bondbondbond types is of interest, don't measure
                 if ((bbb1 == -1) && (bbb2 == -1) && (bbb3 == -1)){
                     continue;}
+                // This condition is because bbb3 is only for the internal integral at tau'=beta
+                // even if the bond bbb3 is of interest, we don't measure the unnecessary time difference types of correlations
+                // we only want t==0 for bbb3 != -1
+                if ((bbb1 == -1) && (bbb2 == -1) && (bbb3 != -1) && (t!=0)){
+                    continue;}
+                
 		if (bbb1 != -1){
                     const num pre1 = phase / p->degen_bbb[bbb1];}
                 if (bbb2 != -1){
                     const num pre2 = phase / p->degen_bbb[bbb2];}
                 if (bbb3 != -1){
 		    const num pre3 = phase / p->degen_bbb[bbb3];}
+                
 		const int delta_i0k0 = (i0 == k0)*delta_dt;
 		const int delta_i1k0 = (i1 == k0)*delta_dt;
 		const int delta_i0k1 = (i0 == k1)*delta_dt;
@@ -1373,17 +1382,16 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
 -1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-guj0j1)+(-gdk0k1)*(-gdi0i1)*(-guj0j1))
 -1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-gdj0j1)-(delta_i0k1-gdi0k1)*gdk0j1*(delta_i1j0-gdj0i1)+(delta_j0k1-gdj0k1)*gdk0i1*gdi0j1+(delta_j0k1-gdj0k1)*gdk0j1*(-gdi0i1)+(-gdk0k1)*(-gdi0i1)*(-gdj0j1)+(-gdk0k1)*(delta_i1j0-gdj0i1)*gdi0j1)	
 ;
-	if((t==0)&&(dt!=0)){factor1 = 0.5; factor2 = 1;}
-        if((t!=0)&&(dt!=0)){factor1 = 1; factor2 = 1;}
-	if((t==0)&&(dt==0)){factor1 = 0; factor2 = 0.5;}
-	if((t!=0)&&(dt==0)){factor1 = 0.5; factor2 = 0.5;}
+	factor1 = p->integral_kernel[(t+dt)*(L+2) + t]; 
+        factor2 = p->integral_kernel[     t*(L+2) + (t+1+dt)]; 
+        factor3 = p->integral_kernel[(t+dt)*(L+2) + (L+1)];
 	//printf("%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, meas, factor1, factor2);
         if (bbb1 != -1){
             m->jjj_l[bbb1 + num_bbb*(t+dt)] += pre1*meas*factor1;}
         if (bbb2 != -1){
             m->jjj_l[bbb2 + num_bbb*t] += pre2*meas*factor2;}
 	if ( (t==0) && (bbb3 != -1) ){
-	    m->jjj_l[bbb3 + num_bbb*(t+dt)] += pre3*meas*0.5;}
+	    m->jjj_l[bbb3 + num_bbb*(t+dt)] += pre3*meas*factor3;}
         }
         }
 	}
