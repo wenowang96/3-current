@@ -178,7 +178,7 @@ def create_1(filename=None, overwrite=False, seed=None,
                                         dd =  d2 + N*d1 + N*N*(ii2 + bps*ii1 + bps*bps*jj)
                                         map_bbb[j + N*jj, i1 + N*ii1, i2 + N*ii2] = dd
                                         degen_bbb[dd] += 1
-    
+
     # limited 3 bond mapping for ruling out some unnecessary measurements.
     # Notice that this can only be used for (bps=2) where no t' appears.
     num_bbb_lim = bps*N*N
@@ -210,7 +210,7 @@ def create_1(filename=None, overwrite=False, seed=None,
                                             degen_bbb_lim[dd_lim] += 1
                                         else:
                                             map_bbb_lim[j + N*jj, i1 + N*ii1, i2 + N*ii2] = -1
-                                            
+                                
     # intergral kernel  --to implement (Cubic spline fit+integral) with discrete imaginary time
     integral_kernel = np.array([0],dtype=np.float64)
     kernel = CubicSpline(np.arange(L+1), np.identity(L+1)).integrate(0, L)
@@ -220,7 +220,8 @@ def create_1(filename=None, overwrite=False, seed=None,
         kernel2 = CubicSpline(np.arange(L-i), np.identity(L-i)).integrate(0, L-i-1)
         kernel =  np.hstack((kernel1,kernel2))
         integral_kernel = np.vstack((integral_kernel,kernel))
-
+    # print(integral_kernel)
+    
     # hopping (assuming periodic boundaries and no field)
     tij = np.zeros((Ny*Nx, Ny*Nx), dtype=np.complex)
     for iy in range(Ny):
@@ -421,7 +422,7 @@ def create_1(filename=None, overwrite=False, seed=None,
             if meas_3curr:
                  f["meas_uneqlt"]["jjj"] = np.zeros(num_bbb*L, dtype=np.float64)
             if meas_3curr_limit:
-                 f["meas_uneqlt"]["jjj_l"] = np.zeros(num_bbb_limit*L, dtype=np.float64)
+                 f["meas_uneqlt"]["jjj_l"] = np.zeros(num_bbb_lim*L, dtype=np.float64)
     return filename
 
 

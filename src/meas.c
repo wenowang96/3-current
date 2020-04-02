@@ -615,11 +615,12 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
 	m->n_sample++;
 	m->sign += phase;
 	const int N = p->N, L = p->L, num_i = p->num_i, num_ij = p->num_ij;
-	const int num_b = p->num_b, num_bs = p->num_bs, num_bb = p->num_bb, num_bbb = p->num_bbb;
+	const int num_b = p->num_b, num_bs = p->num_bs, num_bb = p->num_bb, num_bbb = p->num_bbb, num_bbb_lim = p->num_bbb_lim;
 	const int meas_bond_corr = p->meas_bond_corr;
 	const int meas_energy_corr = p->meas_energy_corr;
 	const int meas_nematic_corr = p->meas_nematic_corr;
         const int meas_3curr = p->meas_3curr;
+        const int meas_3curr_limit = p-> meas_3curr_limit;
 
 
 	const num *const restrict Gu00 = Gu;
@@ -1136,9 +1137,9 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
 	}
         }
         
-        # This is only for none-tp case.
-        # If consider tp and want to improve the speed by removing some measurements, please use a mark matrix to rule out the specific measurements.
-        # It is also a good idea to just use the original 3-current measurments since the "unnecessary" measurements may be used in the future.
+        // This is only for none-tp case.
+        // If consider tp and want to improve the speed by removing some measurements, please use a mark matrix to rule out the specific measurements.
+        // It is also a good idea to just use the original 3-current measurments since the "unnecessary" measurements may be used in the future.
         if (meas_3curr_limit)
 	#pragma omp parallel for
 	for (int t = 0; t < L; t++) {
@@ -1189,12 +1190,15 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
                 if ((bbb1 == -1) && (bbb2 == -1) && (bbb3 != -1) && (t!=0)){
                     continue;}
                 
+                num pre1=0.0;
+                num pre2=0.0;
+                num pre3=0.0; 
 		if (bbb1 != -1){
-                    const num pre1 = phase / p->degen_bbb[bbb1];}
+                    pre1 = phase / p->degen_bbb_lim[bbb1];}
                 if (bbb2 != -1){
-                    const num pre2 = phase / p->degen_bbb[bbb2];}
+                    pre2 = phase / p->degen_bbb_lim[bbb2];}
                 if (bbb3 != -1){
-		    const num pre3 = phase / p->degen_bbb[bbb3];}
+		    pre3 = phase / p->degen_bbb_lim[bbb3];}
                 
 		const int delta_i0k0 = (i0 == k0)*delta_dt;
 		const int delta_i1k0 = (i1 == k0)*delta_dt;
@@ -1325,13 +1329,13 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
                 factor1 = p->integral_kernel[(t+dt)*(L+2) + t]; 
                 factor2 = p->integral_kernel[     t*(L+2) + (t+1+dt)]; 
                 factor3 = p->integral_kernel[(t+dt)*(L+2) + (L+1)];
-                //printf("%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, meas, factor1, factor2);
+                // printf("%f\t%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, factor1, factor2, factor3);
                 if (bbb1 != -1){
-                    m->jjj_l[bbb1 + num_bbb*(t+dt)] += pre1*meas*factor1;}
+                    m->jjj_l[bbb1 + num_bbb_lim*(t+dt)] += pre1*meas*factor1;}
                 if (bbb2 != -1){
-                    m->jjj_l[bbb2 + num_bbb*t] += pre2*meas*factor2;}
+                    m->jjj_l[bbb2 + num_bbb_lim*t] += pre2*meas*factor2;}
                 if ( (t==0) && (bbb3 != -1) ){
-                    m->jjj_l[bbb3 + num_bbb*(t+dt)] += pre3*meas*factor3;}
+                    m->jjj_l[bbb3 + num_bbb_lim*(t+dt)] += pre3*meas*factor3;}
         }
         }
 	}
