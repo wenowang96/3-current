@@ -1085,81 +1085,51 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
 		const num gdi0k1 = Gd0t_dt[i0 + k1*N];
 		const num gdi1k1 = Gd0t_dt[i1 + k1*N];
 
-		const num meas= 
-+1*(+(delta_i1k0-gui1k0)*guk1i0*(-guj1j0)-(delta_i1k0-gui1k0)*guk1j0*(delta_i0j1-guj1i0)+(delta_j1k0-guj1k0)*guk1i0*gui1j0+(delta_j1k0-guj1k0)*guk1j0*(-gui1i0)+(-guk1k0)*(-gui1i0)*(-guj1j0)+(-guk1k0)*(delta_i0j1-guj1i0)*gui1j0)
-+1*(+(delta_i1k0-gui1k0)*guk1i0*(-gdj1j0)+(-guk1k0)*(-gui1i0)*(-gdj1j0))
--1*(+(delta_i1k0-gui1k0)*guk1i0*(-guj0j1)-(delta_i1k0-gui1k0)*guk1j1*(delta_i0j0-guj0i0)+(delta_j0k0-guj0k0)*guk1i0*gui1j1+(delta_j0k0-guj0k0)*guk1j1*(-gui1i0)+(-guk1k0)*(-gui1i0)*(-guj0j1)+(-guk1k0)*(delta_i0j0-guj0i0)*gui1j1)
--1*(+(delta_i1k0-gui1k0)*guk1i0*(-gdj0j1)+(-guk1k0)*(-gui1i0)*(-gdj0j1))
-+1*(+(delta_j1k0-guj1k0)*guk1j0*(-gdi1i0)+(-guk1k0)*(-gdi1i0)*(-guj1j0))
-+1*(+(-guk1k0)*(-gdi1i0)*(-gdj1j0)+(-guk1k0)*(delta_i0j1-gdj1i0)*gdi1j0)
--1*(+(delta_j0k0-guj0k0)*guk1j1*(-gdi1i0)+(-guk1k0)*(-gdi1i0)*(-guj0j1))
--1*(+(-guk1k0)*(-gdi1i0)*(-gdj0j1)+(-guk1k0)*(delta_i0j0-gdj0i0)*gdi1j1)
--1*(+(delta_i0k0-gui0k0)*guk1i1*(-guj1j0)-(delta_i0k0-gui0k0)*guk1j0*(delta_i1j1-guj1i1)+(delta_j1k0-guj1k0)*guk1i1*gui0j0+(delta_j1k0-guj1k0)*guk1j0*(-gui0i1)+(-guk1k0)*(-gui0i1)*(-guj1j0)+(-guk1k0)*(delta_i1j1-guj1i1)*gui0j0)
--1*(+(delta_i0k0-gui0k0)*guk1i1*(-gdj1j0)+(-guk1k0)*(-gui0i1)*(-gdj1j0))
-+1*(+(delta_i0k0-gui0k0)*guk1i1*(-guj0j1)-(delta_i0k0-gui0k0)*guk1j1*(delta_i1j0-guj0i1)+(delta_j0k0-guj0k0)*guk1i1*gui0j1+(delta_j0k0-guj0k0)*guk1j1*(-gui0i1)+(-guk1k0)*(-gui0i1)*(-guj0j1)+(-guk1k0)*(delta_i1j0-guj0i1)*gui0j1)
-+1*(+(delta_i0k0-gui0k0)*guk1i1*(-gdj0j1)+(-guk1k0)*(-gui0i1)*(-gdj0j1))
--1*(+(delta_j1k0-guj1k0)*guk1j0*(-gdi0i1)+(-guk1k0)*(-gdi0i1)*(-guj1j0))
--1*(+(-guk1k0)*(-gdi0i1)*(-gdj1j0)+(-guk1k0)*(delta_i1j1-gdj1i1)*gdi0j0)
-+1*(+(delta_j0k0-guj0k0)*guk1j1*(-gdi0i1)+(-guk1k0)*(-gdi0i1)*(-guj0j1))
-+1*(+(-guk1k0)*(-gdi0i1)*(-gdj0j1)+(-guk1k0)*(delta_i1j0-gdj0i1)*gdi0j1)
-+1*(+(-gdk1k0)*(-gui1i0)*(-guj1j0)+(-gdk1k0)*(delta_i0j1-guj1i0)*gui1j0)
-+1*(+(delta_j1k0-gdj1k0)*gdk1j0*(-gui1i0)+(-gdk1k0)*(-gui1i0)*(-gdj1j0))
--1*(+(-gdk1k0)*(-gui1i0)*(-guj0j1)+(-gdk1k0)*(delta_i0j0-guj0i0)*gui1j1)
--1*(+(delta_j0k0-gdj0k0)*gdk1j1*(-gui1i0)+(-gdk1k0)*(-gui1i0)*(-gdj0j1))
-+1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-guj1j0)+(-gdk1k0)*(-gdi1i0)*(-guj1j0))
-+1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-gdj1j0)-(delta_i1k0-gdi1k0)*gdk1j0*(delta_i0j1-gdj1i0)+(delta_j1k0-gdj1k0)*gdk1i0*gdi1j0+(delta_j1k0-gdj1k0)*gdk1j0*(-gdi1i0)+(-gdk1k0)*(-gdi1i0)*(-gdj1j0)+(-gdk1k0)*(delta_i0j1-gdj1i0)*gdi1j0)
--1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-guj0j1)+(-gdk1k0)*(-gdi1i0)*(-guj0j1))
--1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-gdj0j1)-(delta_i1k0-gdi1k0)*gdk1j1*(delta_i0j0-gdj0i0)+(delta_j0k0-gdj0k0)*gdk1i0*gdi1j1+(delta_j0k0-gdj0k0)*gdk1j1*(-gdi1i0)+(-gdk1k0)*(-gdi1i0)*(-gdj0j1)+(-gdk1k0)*(delta_i0j0-gdj0i0)*gdi1j1)
--1*(+(-gdk1k0)*(-gui0i1)*(-guj1j0)+(-gdk1k0)*(delta_i1j1-guj1i1)*gui0j0)
--1*(+(delta_j1k0-gdj1k0)*gdk1j0*(-gui0i1)+(-gdk1k0)*(-gui0i1)*(-gdj1j0))
-+1*(+(-gdk1k0)*(-gui0i1)*(-guj0j1)+(-gdk1k0)*(delta_i1j0-guj0i1)*gui0j1)
-+1*(+(delta_j0k0-gdj0k0)*gdk1j1*(-gui0i1)+(-gdk1k0)*(-gui0i1)*(-gdj0j1))
--1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-guj1j0)+(-gdk1k0)*(-gdi0i1)*(-guj1j0))
--1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-gdj1j0)-(delta_i0k0-gdi0k0)*gdk1j0*(delta_i1j1-gdj1i1)+(delta_j1k0-gdj1k0)*gdk1i1*gdi0j0+(delta_j1k0-gdj1k0)*gdk1j0*(-gdi0i1)+(-gdk1k0)*(-gdi0i1)*(-gdj1j0)+(-gdk1k0)*(delta_i1j1-gdj1i1)*gdi0j0)
-+1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-guj0j1)+(-gdk1k0)*(-gdi0i1)*(-guj0j1))
-+1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-gdj0j1)-(delta_i0k0-gdi0k0)*gdk1j1*(delta_i1j0-gdj0i1)+(delta_j0k0-gdj0k0)*gdk1i1*gdi0j1+(delta_j0k0-gdj0k0)*gdk1j1*(-gdi0i1)+(-gdk1k0)*(-gdi0i1)*(-gdj0j1)+(-gdk1k0)*(delta_i1j0-gdj0i1)*gdi0j1)
--1*(+(delta_i1k1-gui1k1)*guk0i0*(-guj1j0)-(delta_i1k1-gui1k1)*guk0j0*(delta_i0j1-guj1i0)+(delta_j1k1-guj1k1)*guk0i0*gui1j0+(delta_j1k1-guj1k1)*guk0j0*(-gui1i0)+(-guk0k1)*(-gui1i0)*(-guj1j0)+(-guk0k1)*(delta_i0j1-guj1i0)*gui1j0)
--1*(+(delta_i1k1-gui1k1)*guk0i0*(-gdj1j0)+(-guk0k1)*(-gui1i0)*(-gdj1j0))
-+1*(+(delta_i1k1-gui1k1)*guk0i0*(-guj0j1)-(delta_i1k1-gui1k1)*guk0j1*(delta_i0j0-guj0i0)+(delta_j0k1-guj0k1)*guk0i0*gui1j1+(delta_j0k1-guj0k1)*guk0j1*(-gui1i0)+(-guk0k1)*(-gui1i0)*(-guj0j1)+(-guk0k1)*(delta_i0j0-guj0i0)*gui1j1)
-+1*(+(delta_i1k1-gui1k1)*guk0i0*(-gdj0j1)+(-guk0k1)*(-gui1i0)*(-gdj0j1))
--1*(+(delta_j1k1-guj1k1)*guk0j0*(-gdi1i0)+(-guk0k1)*(-gdi1i0)*(-guj1j0))
--1*(+(-guk0k1)*(-gdi1i0)*(-gdj1j0)+(-guk0k1)*(delta_i0j1-gdj1i0)*gdi1j0)
-+1*(+(delta_j0k1-guj0k1)*guk0j1*(-gdi1i0)+(-guk0k1)*(-gdi1i0)*(-guj0j1))
-+1*(+(-guk0k1)*(-gdi1i0)*(-gdj0j1)+(-guk0k1)*(delta_i0j0-gdj0i0)*gdi1j1)
-+1*(+(delta_i0k1-gui0k1)*guk0i1*(-guj1j0)-(delta_i0k1-gui0k1)*guk0j0*(delta_i1j1-guj1i1)+(delta_j1k1-guj1k1)*guk0i1*gui0j0+(delta_j1k1-guj1k1)*guk0j0*(-gui0i1)+(-guk0k1)*(-gui0i1)*(-guj1j0)+(-guk0k1)*(delta_i1j1-guj1i1)*gui0j0)
-+1*(+(delta_i0k1-gui0k1)*guk0i1*(-gdj1j0)+(-guk0k1)*(-gui0i1)*(-gdj1j0))
--1*(+(delta_i0k1-gui0k1)*guk0i1*(-guj0j1)-(delta_i0k1-gui0k1)*guk0j1*(delta_i1j0-guj0i1)+(delta_j0k1-guj0k1)*guk0i1*gui0j1+(delta_j0k1-guj0k1)*guk0j1*(-gui0i1)+(-guk0k1)*(-gui0i1)*(-guj0j1)+(-guk0k1)*(delta_i1j0-guj0i1)*gui0j1)
--1*(+(delta_i0k1-gui0k1)*guk0i1*(-gdj0j1)+(-guk0k1)*(-gui0i1)*(-gdj0j1))
-+1*(+(delta_j1k1-guj1k1)*guk0j0*(-gdi0i1)+(-guk0k1)*(-gdi0i1)*(-guj1j0))
-+1*(+(-guk0k1)*(-gdi0i1)*(-gdj1j0)+(-guk0k1)*(delta_i1j1-gdj1i1)*gdi0j0)
--1*(+(delta_j0k1-guj0k1)*guk0j1*(-gdi0i1)+(-guk0k1)*(-gdi0i1)*(-guj0j1))
--1*(+(-guk0k1)*(-gdi0i1)*(-gdj0j1)+(-guk0k1)*(delta_i1j0-gdj0i1)*gdi0j1)
--1*(+(-gdk0k1)*(-gui1i0)*(-guj1j0)+(-gdk0k1)*(delta_i0j1-guj1i0)*gui1j0)
--1*(+(delta_j1k1-gdj1k1)*gdk0j0*(-gui1i0)+(-gdk0k1)*(-gui1i0)*(-gdj1j0))
-+1*(+(-gdk0k1)*(-gui1i0)*(-guj0j1)+(-gdk0k1)*(delta_i0j0-guj0i0)*gui1j1)
-+1*(+(delta_j0k1-gdj0k1)*gdk0j1*(-gui1i0)+(-gdk0k1)*(-gui1i0)*(-gdj0j1))
--1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-guj1j0)+(-gdk0k1)*(-gdi1i0)*(-guj1j0))
--1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-gdj1j0)-(delta_i1k1-gdi1k1)*gdk0j0*(delta_i0j1-gdj1i0)+(delta_j1k1-gdj1k1)*gdk0i0*gdi1j0+(delta_j1k1-gdj1k1)*gdk0j0*(-gdi1i0)+(-gdk0k1)*(-gdi1i0)*(-gdj1j0)+(-gdk0k1)*(delta_i0j1-gdj1i0)*gdi1j0)
-+1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-guj0j1)+(-gdk0k1)*(-gdi1i0)*(-guj0j1))
-+1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-gdj0j1)-(delta_i1k1-gdi1k1)*gdk0j1*(delta_i0j0-gdj0i0)+(delta_j0k1-gdj0k1)*gdk0i0*gdi1j1+(delta_j0k1-gdj0k1)*gdk0j1*(-gdi1i0)+(-gdk0k1)*(-gdi1i0)*(-gdj0j1)+(-gdk0k1)*(delta_i0j0-gdj0i0)*gdi1j1)
-+1*(+(-gdk0k1)*(-gui0i1)*(-guj1j0)+(-gdk0k1)*(delta_i1j1-guj1i1)*gui0j0)
-+1*(+(delta_j1k1-gdj1k1)*gdk0j0*(-gui0i1)+(-gdk0k1)*(-gui0i1)*(-gdj1j0))
--1*(+(-gdk0k1)*(-gui0i1)*(-guj0j1)+(-gdk0k1)*(delta_i1j0-guj0i1)*gui0j1)
--1*(+(delta_j0k1-gdj0k1)*gdk0j1*(-gui0i1)+(-gdk0k1)*(-gui0i1)*(-gdj0j1))
-+1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-guj1j0)+(-gdk0k1)*(-gdi0i1)*(-guj1j0))
-+1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-gdj1j0)-(delta_i0k1-gdi0k1)*gdk0j0*(delta_i1j1-gdj1i1)+(delta_j1k1-gdj1k1)*gdk0i1*gdi0j0+(delta_j1k1-gdj1k1)*gdk0j0*(-gdi0i1)+(-gdk0k1)*(-gdi0i1)*(-gdj1j0)+(-gdk0k1)*(delta_i1j1-gdj1i1)*gdi0j0)
--1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-guj0j1)+(-gdk0k1)*(-gdi0i1)*(-guj0j1))
--1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-gdj0j1)-(delta_i0k1-gdi0k1)*gdk0j1*(delta_i1j0-gdj0i1)+(delta_j0k1-gdj0k1)*gdk0i1*gdi0j1+(delta_j0k1-gdj0k1)*gdk0j1*(-gdi0i1)+(-gdk0k1)*(-gdi0i1)*(-gdj0j1)+(-gdk0k1)*(delta_i1j0-gdj0i1)*gdi0j1)	
-;
-	if((t==0)&&(dt!=0)){factor1 = 0.5; factor2 = 1;}
-        if((t!=0)&&(dt!=0)){factor1 = 1; factor2 = 1;}
-	if((t==0)&&(dt==0)){factor1 = 0; factor2 = 0.5;}
-	if((t!=0)&&(dt==0)){factor1 = 0.5; factor2 = 0.5;}
-	//printf("%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, meas, factor1, factor2);
-        m->jjj[bbb1 + num_bbb*(t+dt)] += pre1*meas*factor1;
-        m->jjj[bbb2 + num_bbb*t] += pre2*meas*factor2;
-	if (t==0)
-	m->jjj[bbb3 + num_bbb*(t+dt)] += pre3*meas*0.5;
+		const num jku =  (guk0k1-guk1k0);
+                const num jkd =  (gdk0k1-gdk1k0);
+                const num jiu =  (gui0i1-gui1i0);
+                const num jid =  (gdi0i1-gdi1i0);
+                const num jju =  (guj0j1-guj1j0);
+                const num jjd =  (gdj0j1-gdj1j0);
+
+                const num jjju = jku*jiu*jju;
+                const num jjjd = jkd*jid*jjd;
+
+                const num ij_u = (gui1i0-gui0i1)*(guj1j0-guj0j1) + (delta_i0j1-guj1i0)*gui1j0 - (delta_i0j0-guj0i0)*gui1j1 + (delta_i1j0-guj0i1)*gui0j1 - (delta_i1j1-guj1i1)*gui0j0;
+                const num ij_d = (gdi1i0-gdi0i1)*(gdj1j0-gdj0j1) + (delta_i0j1-gdj1i0)*gdi1j0 - (delta_i0j0-gdj0i0)*gdi1j1 + (delta_i1j0-gdj0i1)*gdi0j1 - (delta_i1j1-gdj1i1)*gdi0j0;
+                const num kj_u = (guk1k0-guk0k1)*(guj1j0-guj0j1) + (delta_j1k0-guj1k0)*guk1j0 - (delta_j0k0-guj0k0)*guk1j1 + (delta_j0k1-guj0k1)*guk0j1 - (delta_j1k1-guj1k1)*guk0j0;
+                const num kj_d = (gdk1k0-gdk0k1)*(gdj1j0-gdj0j1) + (delta_j1k0-gdj1k0)*gdk1j0 - (delta_j0k0-gdj0k0)*gdk1j1 + (delta_j0k1-gdj0k1)*gdk0j1 - (delta_j1k1-gdj1k1)*gdk0j0;
+                const num ki_u = (guk1k0-guk0k1)*(gui1i0-gui0i1) + (delta_i1k0-gui1k0)*guk1i0 - (delta_i0k0-gui0k0)*guk1i1 + (delta_i0k1-gui0k1)*guk0i1 - (delta_i1k1-gui1k1)*guk0i0;
+                const num ki_d = (gdk1k0-gdk0k1)*(gdi1i0-gdi0i1) + (delta_i1k0-gdi1k0)*gdk1i0 - (delta_i0k0-gdi0k0)*gdk1i1 + (delta_i0k1-gdi0k1)*gdk0i1 - (delta_i1k1-gdi1k1)*gdk0i0;
+                const num part1 = (jku+jkd)*(ij_u+ij_d)+(jiu+jid)*(kj_u+kj_d)+(jju+jjd)*(ki_u+ki_d);
+
+                const num part2u = (delta_i1k0-gui1k0)*guk1j0*(delta_i0j1-guj1i0) - (delta_i1k1-gui1k1)*guk0j0*(delta_i0j1-guj1i0) 
+                                  -(delta_i0k0-gui0k0)*guk1j0*(delta_i1j1-guj1i1) - (delta_i1k0-gui1k0)*guk1j1*(delta_i0j0-guj0i0) 
+                                  +(delta_i0k1-gui0k1)*guk0j0*(delta_i1j1-guj1i1) + (delta_i1k1-gui1k1)*guk0j1*(delta_i0j0-guj0i0) 
+                                  +(delta_i0k0-gui0k0)*guk1j1*(delta_i1j0-guj0i1) - (delta_i0k1-gui0k1)*guk0j1*(delta_i1j0-guj0i1);
+
+                const num part2d = (delta_i1k0-gdi1k0)*gdk1j0*(delta_i0j1-gdj1i0) - (delta_i1k1-gdi1k1)*gdk0j0*(delta_i0j1-gdj1i0) 
+                                  -(delta_i0k0-gdi0k0)*gdk1j0*(delta_i1j1-gdj1i1) - (delta_i1k0-gdi1k0)*gdk1j1*(delta_i0j0-gdj0i0) 
+                                  +(delta_i0k1-gdi0k1)*gdk0j0*(delta_i1j1-gdj1i1) + (delta_i1k1-gdi1k1)*gdk0j1*(delta_i0j0-gdj0i0) 
+                                  +(delta_i0k0-gdi0k0)*gdk1j1*(delta_i1j0-gdj0i1) - (delta_i0k1-gdi0k1)*gdk0j1*(delta_i1j0-gdj0i1);
+
+                const num part3u = guk1i0*gui1j0*(delta_j1k0-guj1k0) - guk0i0*gui1j0*(delta_j1k1-guj1k1) - guk1i1*gui0j0*(delta_j1k0-guj1k0) 
+                                 - guk1i0*gui1j1*(delta_j0k0-guj0k0) + guk0i1*gui0j0*(delta_j1k1-guj1k1) + guk0i0*gui1j1*(delta_j0k1-guj0k1) 
+                                 + guk1i1*gui0j1*(delta_j0k0-guj0k0) - guk0i1*gui0j1*(delta_j0k1-guj0k1);
+
+                const num part3d = gdk1i0*gdi1j0*(delta_j1k0-gdj1k0) - gdk0i0*gdi1j0*(delta_j1k1-gdj1k1) - gdk1i1*gdi0j0*(delta_j1k0-gdj1k0) 
+                                 - gdk1i0*gdi1j1*(delta_j0k0-gdj0k0) + gdk0i1*gdi0j0*(delta_j1k1-gdj1k1) + gdk0i0*gdi1j1*(delta_j0k1-gdj0k1) 
+                                 + gdk1i1*gdi0j1*(delta_j0k0-gdj0k0) - gdk0i1*gdi0j1*(delta_j0k1-gdj0k1);
+		const num meas=-2*jjju -2*jjjd +part1 -part2u -part2d +part3u +part3d;
+                if((t==0)&&(dt!=0)){factor1 = 0.5; factor2 = 1;}
+                if((t!=0)&&(dt!=0)){factor1 = 1; factor2 = 1;}
+                if((t==0)&&(dt==0)){factor1 = 0; factor2 = 0.5;}
+                if((t!=0)&&(dt==0)){factor1 = 0.5; factor2 = 0.5;}
+                //printf("%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, meas, factor1, factor2);
+                m->jjj[bbb1 + num_bbb*(t+dt)] += pre1*meas*factor1;
+                m->jjj[bbb2 + num_bbb*t] += pre2*meas*factor2;
+                if (t==0)
+                m->jjj[bbb3 + num_bbb*(t+dt)] += pre3*meas*0.5;
         }
         }
 	}
@@ -1316,82 +1286,52 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
 		const num gdi0k1 = Gd0t_dt[i0 + k1*N];
 		const num gdi1k1 = Gd0t_dt[i1 + k1*N];
 
-		const num meas= 
-+1*(+(delta_i1k0-gui1k0)*guk1i0*(-guj1j0)-(delta_i1k0-gui1k0)*guk1j0*(delta_i0j1-guj1i0)+(delta_j1k0-guj1k0)*guk1i0*gui1j0+(delta_j1k0-guj1k0)*guk1j0*(-gui1i0)+(-guk1k0)*(-gui1i0)*(-guj1j0)+(-guk1k0)*(delta_i0j1-guj1i0)*gui1j0)
-+1*(+(delta_i1k0-gui1k0)*guk1i0*(-gdj1j0)+(-guk1k0)*(-gui1i0)*(-gdj1j0))
--1*(+(delta_i1k0-gui1k0)*guk1i0*(-guj0j1)-(delta_i1k0-gui1k0)*guk1j1*(delta_i0j0-guj0i0)+(delta_j0k0-guj0k0)*guk1i0*gui1j1+(delta_j0k0-guj0k0)*guk1j1*(-gui1i0)+(-guk1k0)*(-gui1i0)*(-guj0j1)+(-guk1k0)*(delta_i0j0-guj0i0)*gui1j1)
--1*(+(delta_i1k0-gui1k0)*guk1i0*(-gdj0j1)+(-guk1k0)*(-gui1i0)*(-gdj0j1))
-+1*(+(delta_j1k0-guj1k0)*guk1j0*(-gdi1i0)+(-guk1k0)*(-gdi1i0)*(-guj1j0))
-+1*(+(-guk1k0)*(-gdi1i0)*(-gdj1j0)+(-guk1k0)*(delta_i0j1-gdj1i0)*gdi1j0)
--1*(+(delta_j0k0-guj0k0)*guk1j1*(-gdi1i0)+(-guk1k0)*(-gdi1i0)*(-guj0j1))
--1*(+(-guk1k0)*(-gdi1i0)*(-gdj0j1)+(-guk1k0)*(delta_i0j0-gdj0i0)*gdi1j1)
--1*(+(delta_i0k0-gui0k0)*guk1i1*(-guj1j0)-(delta_i0k0-gui0k0)*guk1j0*(delta_i1j1-guj1i1)+(delta_j1k0-guj1k0)*guk1i1*gui0j0+(delta_j1k0-guj1k0)*guk1j0*(-gui0i1)+(-guk1k0)*(-gui0i1)*(-guj1j0)+(-guk1k0)*(delta_i1j1-guj1i1)*gui0j0)
--1*(+(delta_i0k0-gui0k0)*guk1i1*(-gdj1j0)+(-guk1k0)*(-gui0i1)*(-gdj1j0))
-+1*(+(delta_i0k0-gui0k0)*guk1i1*(-guj0j1)-(delta_i0k0-gui0k0)*guk1j1*(delta_i1j0-guj0i1)+(delta_j0k0-guj0k0)*guk1i1*gui0j1+(delta_j0k0-guj0k0)*guk1j1*(-gui0i1)+(-guk1k0)*(-gui0i1)*(-guj0j1)+(-guk1k0)*(delta_i1j0-guj0i1)*gui0j1)
-+1*(+(delta_i0k0-gui0k0)*guk1i1*(-gdj0j1)+(-guk1k0)*(-gui0i1)*(-gdj0j1))
--1*(+(delta_j1k0-guj1k0)*guk1j0*(-gdi0i1)+(-guk1k0)*(-gdi0i1)*(-guj1j0))
--1*(+(-guk1k0)*(-gdi0i1)*(-gdj1j0)+(-guk1k0)*(delta_i1j1-gdj1i1)*gdi0j0)
-+1*(+(delta_j0k0-guj0k0)*guk1j1*(-gdi0i1)+(-guk1k0)*(-gdi0i1)*(-guj0j1))
-+1*(+(-guk1k0)*(-gdi0i1)*(-gdj0j1)+(-guk1k0)*(delta_i1j0-gdj0i1)*gdi0j1)
-+1*(+(-gdk1k0)*(-gui1i0)*(-guj1j0)+(-gdk1k0)*(delta_i0j1-guj1i0)*gui1j0)
-+1*(+(delta_j1k0-gdj1k0)*gdk1j0*(-gui1i0)+(-gdk1k0)*(-gui1i0)*(-gdj1j0))
--1*(+(-gdk1k0)*(-gui1i0)*(-guj0j1)+(-gdk1k0)*(delta_i0j0-guj0i0)*gui1j1)
--1*(+(delta_j0k0-gdj0k0)*gdk1j1*(-gui1i0)+(-gdk1k0)*(-gui1i0)*(-gdj0j1))
-+1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-guj1j0)+(-gdk1k0)*(-gdi1i0)*(-guj1j0))
-+1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-gdj1j0)-(delta_i1k0-gdi1k0)*gdk1j0*(delta_i0j1-gdj1i0)+(delta_j1k0-gdj1k0)*gdk1i0*gdi1j0+(delta_j1k0-gdj1k0)*gdk1j0*(-gdi1i0)+(-gdk1k0)*(-gdi1i0)*(-gdj1j0)+(-gdk1k0)*(delta_i0j1-gdj1i0)*gdi1j0)
--1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-guj0j1)+(-gdk1k0)*(-gdi1i0)*(-guj0j1))
--1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-gdj0j1)-(delta_i1k0-gdi1k0)*gdk1j1*(delta_i0j0-gdj0i0)+(delta_j0k0-gdj0k0)*gdk1i0*gdi1j1+(delta_j0k0-gdj0k0)*gdk1j1*(-gdi1i0)+(-gdk1k0)*(-gdi1i0)*(-gdj0j1)+(-gdk1k0)*(delta_i0j0-gdj0i0)*gdi1j1)
--1*(+(-gdk1k0)*(-gui0i1)*(-guj1j0)+(-gdk1k0)*(delta_i1j1-guj1i1)*gui0j0)
--1*(+(delta_j1k0-gdj1k0)*gdk1j0*(-gui0i1)+(-gdk1k0)*(-gui0i1)*(-gdj1j0))
-+1*(+(-gdk1k0)*(-gui0i1)*(-guj0j1)+(-gdk1k0)*(delta_i1j0-guj0i1)*gui0j1)
-+1*(+(delta_j0k0-gdj0k0)*gdk1j1*(-gui0i1)+(-gdk1k0)*(-gui0i1)*(-gdj0j1))
--1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-guj1j0)+(-gdk1k0)*(-gdi0i1)*(-guj1j0))
--1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-gdj1j0)-(delta_i0k0-gdi0k0)*gdk1j0*(delta_i1j1-gdj1i1)+(delta_j1k0-gdj1k0)*gdk1i1*gdi0j0+(delta_j1k0-gdj1k0)*gdk1j0*(-gdi0i1)+(-gdk1k0)*(-gdi0i1)*(-gdj1j0)+(-gdk1k0)*(delta_i1j1-gdj1i1)*gdi0j0)
-+1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-guj0j1)+(-gdk1k0)*(-gdi0i1)*(-guj0j1))
-+1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-gdj0j1)-(delta_i0k0-gdi0k0)*gdk1j1*(delta_i1j0-gdj0i1)+(delta_j0k0-gdj0k0)*gdk1i1*gdi0j1+(delta_j0k0-gdj0k0)*gdk1j1*(-gdi0i1)+(-gdk1k0)*(-gdi0i1)*(-gdj0j1)+(-gdk1k0)*(delta_i1j0-gdj0i1)*gdi0j1)
--1*(+(delta_i1k1-gui1k1)*guk0i0*(-guj1j0)-(delta_i1k1-gui1k1)*guk0j0*(delta_i0j1-guj1i0)+(delta_j1k1-guj1k1)*guk0i0*gui1j0+(delta_j1k1-guj1k1)*guk0j0*(-gui1i0)+(-guk0k1)*(-gui1i0)*(-guj1j0)+(-guk0k1)*(delta_i0j1-guj1i0)*gui1j0)
--1*(+(delta_i1k1-gui1k1)*guk0i0*(-gdj1j0)+(-guk0k1)*(-gui1i0)*(-gdj1j0))
-+1*(+(delta_i1k1-gui1k1)*guk0i0*(-guj0j1)-(delta_i1k1-gui1k1)*guk0j1*(delta_i0j0-guj0i0)+(delta_j0k1-guj0k1)*guk0i0*gui1j1+(delta_j0k1-guj0k1)*guk0j1*(-gui1i0)+(-guk0k1)*(-gui1i0)*(-guj0j1)+(-guk0k1)*(delta_i0j0-guj0i0)*gui1j1)
-+1*(+(delta_i1k1-gui1k1)*guk0i0*(-gdj0j1)+(-guk0k1)*(-gui1i0)*(-gdj0j1))
--1*(+(delta_j1k1-guj1k1)*guk0j0*(-gdi1i0)+(-guk0k1)*(-gdi1i0)*(-guj1j0))
--1*(+(-guk0k1)*(-gdi1i0)*(-gdj1j0)+(-guk0k1)*(delta_i0j1-gdj1i0)*gdi1j0)
-+1*(+(delta_j0k1-guj0k1)*guk0j1*(-gdi1i0)+(-guk0k1)*(-gdi1i0)*(-guj0j1))
-+1*(+(-guk0k1)*(-gdi1i0)*(-gdj0j1)+(-guk0k1)*(delta_i0j0-gdj0i0)*gdi1j1)
-+1*(+(delta_i0k1-gui0k1)*guk0i1*(-guj1j0)-(delta_i0k1-gui0k1)*guk0j0*(delta_i1j1-guj1i1)+(delta_j1k1-guj1k1)*guk0i1*gui0j0+(delta_j1k1-guj1k1)*guk0j0*(-gui0i1)+(-guk0k1)*(-gui0i1)*(-guj1j0)+(-guk0k1)*(delta_i1j1-guj1i1)*gui0j0)
-+1*(+(delta_i0k1-gui0k1)*guk0i1*(-gdj1j0)+(-guk0k1)*(-gui0i1)*(-gdj1j0))
--1*(+(delta_i0k1-gui0k1)*guk0i1*(-guj0j1)-(delta_i0k1-gui0k1)*guk0j1*(delta_i1j0-guj0i1)+(delta_j0k1-guj0k1)*guk0i1*gui0j1+(delta_j0k1-guj0k1)*guk0j1*(-gui0i1)+(-guk0k1)*(-gui0i1)*(-guj0j1)+(-guk0k1)*(delta_i1j0-guj0i1)*gui0j1)
--1*(+(delta_i0k1-gui0k1)*guk0i1*(-gdj0j1)+(-guk0k1)*(-gui0i1)*(-gdj0j1))
-+1*(+(delta_j1k1-guj1k1)*guk0j0*(-gdi0i1)+(-guk0k1)*(-gdi0i1)*(-guj1j0))
-+1*(+(-guk0k1)*(-gdi0i1)*(-gdj1j0)+(-guk0k1)*(delta_i1j1-gdj1i1)*gdi0j0)
--1*(+(delta_j0k1-guj0k1)*guk0j1*(-gdi0i1)+(-guk0k1)*(-gdi0i1)*(-guj0j1))
--1*(+(-guk0k1)*(-gdi0i1)*(-gdj0j1)+(-guk0k1)*(delta_i1j0-gdj0i1)*gdi0j1)
--1*(+(-gdk0k1)*(-gui1i0)*(-guj1j0)+(-gdk0k1)*(delta_i0j1-guj1i0)*gui1j0)
--1*(+(delta_j1k1-gdj1k1)*gdk0j0*(-gui1i0)+(-gdk0k1)*(-gui1i0)*(-gdj1j0))
-+1*(+(-gdk0k1)*(-gui1i0)*(-guj0j1)+(-gdk0k1)*(delta_i0j0-guj0i0)*gui1j1)
-+1*(+(delta_j0k1-gdj0k1)*gdk0j1*(-gui1i0)+(-gdk0k1)*(-gui1i0)*(-gdj0j1))
--1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-guj1j0)+(-gdk0k1)*(-gdi1i0)*(-guj1j0))
--1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-gdj1j0)-(delta_i1k1-gdi1k1)*gdk0j0*(delta_i0j1-gdj1i0)+(delta_j1k1-gdj1k1)*gdk0i0*gdi1j0+(delta_j1k1-gdj1k1)*gdk0j0*(-gdi1i0)+(-gdk0k1)*(-gdi1i0)*(-gdj1j0)+(-gdk0k1)*(delta_i0j1-gdj1i0)*gdi1j0)
-+1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-guj0j1)+(-gdk0k1)*(-gdi1i0)*(-guj0j1))
-+1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-gdj0j1)-(delta_i1k1-gdi1k1)*gdk0j1*(delta_i0j0-gdj0i0)+(delta_j0k1-gdj0k1)*gdk0i0*gdi1j1+(delta_j0k1-gdj0k1)*gdk0j1*(-gdi1i0)+(-gdk0k1)*(-gdi1i0)*(-gdj0j1)+(-gdk0k1)*(delta_i0j0-gdj0i0)*gdi1j1)
-+1*(+(-gdk0k1)*(-gui0i1)*(-guj1j0)+(-gdk0k1)*(delta_i1j1-guj1i1)*gui0j0)
-+1*(+(delta_j1k1-gdj1k1)*gdk0j0*(-gui0i1)+(-gdk0k1)*(-gui0i1)*(-gdj1j0))
--1*(+(-gdk0k1)*(-gui0i1)*(-guj0j1)+(-gdk0k1)*(delta_i1j0-guj0i1)*gui0j1)
--1*(+(delta_j0k1-gdj0k1)*gdk0j1*(-gui0i1)+(-gdk0k1)*(-gui0i1)*(-gdj0j1))
-+1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-guj1j0)+(-gdk0k1)*(-gdi0i1)*(-guj1j0))
-+1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-gdj1j0)-(delta_i0k1-gdi0k1)*gdk0j0*(delta_i1j1-gdj1i1)+(delta_j1k1-gdj1k1)*gdk0i1*gdi0j0+(delta_j1k1-gdj1k1)*gdk0j0*(-gdi0i1)+(-gdk0k1)*(-gdi0i1)*(-gdj1j0)+(-gdk0k1)*(delta_i1j1-gdj1i1)*gdi0j0)
--1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-guj0j1)+(-gdk0k1)*(-gdi0i1)*(-guj0j1))
--1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-gdj0j1)-(delta_i0k1-gdi0k1)*gdk0j1*(delta_i1j0-gdj0i1)+(delta_j0k1-gdj0k1)*gdk0i1*gdi0j1+(delta_j0k1-gdj0k1)*gdk0j1*(-gdi0i1)+(-gdk0k1)*(-gdi0i1)*(-gdj0j1)+(-gdk0k1)*(delta_i1j0-gdj0i1)*gdi0j1)	
-;
-	factor1 = p->integral_kernel[(t+dt)*(L+2) + t]; 
-        factor2 = p->integral_kernel[     t*(L+2) + (t+1+dt)]; 
-        factor3 = p->integral_kernel[(t+dt)*(L+2) + (L+1)];
-	//printf("%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, meas, factor1, factor2);
-        if (bbb1 != -1){
-            m->jjj_l[bbb1 + num_bbb*(t+dt)] += pre1*meas*factor1;}
-        if (bbb2 != -1){
-            m->jjj_l[bbb2 + num_bbb*t] += pre2*meas*factor2;}
-	if ( (t==0) && (bbb3 != -1) ){
-	    m->jjj_l[bbb3 + num_bbb*(t+dt)] += pre3*meas*factor3;}
+                const num jku =  (guk0k1-guk1k0);
+                const num jkd =  (gdk0k1-gdk1k0);
+                const num jiu =  (gui0i1-gui1i0);
+                const num jid =  (gdi0i1-gdi1i0);
+                const num jju =  (guj0j1-guj1j0);
+                const num jjd =  (gdj0j1-gdj1j0);
+
+                const num jjju = jku*jiu*jju;
+                const num jjjd = jkd*jid*jjd;
+
+                const num ij_u = (gui1i0-gui0i1)*(guj1j0-guj0j1) + (delta_i0j1-guj1i0)*gui1j0 - (delta_i0j0-guj0i0)*gui1j1 + (delta_i1j0-guj0i1)*gui0j1 - (delta_i1j1-guj1i1)*gui0j0;
+                const num ij_d = (gdi1i0-gdi0i1)*(gdj1j0-gdj0j1) + (delta_i0j1-gdj1i0)*gdi1j0 - (delta_i0j0-gdj0i0)*gdi1j1 + (delta_i1j0-gdj0i1)*gdi0j1 - (delta_i1j1-gdj1i1)*gdi0j0;
+                const num kj_u = (guk1k0-guk0k1)*(guj1j0-guj0j1) + (delta_j1k0-guj1k0)*guk1j0 - (delta_j0k0-guj0k0)*guk1j1 + (delta_j0k1-guj0k1)*guk0j1 - (delta_j1k1-guj1k1)*guk0j0;
+                const num kj_d = (gdk1k0-gdk0k1)*(gdj1j0-gdj0j1) + (delta_j1k0-gdj1k0)*gdk1j0 - (delta_j0k0-gdj0k0)*gdk1j1 + (delta_j0k1-gdj0k1)*gdk0j1 - (delta_j1k1-gdj1k1)*gdk0j0;
+                const num ki_u = (guk1k0-guk0k1)*(gui1i0-gui0i1) + (delta_i1k0-gui1k0)*guk1i0 - (delta_i0k0-gui0k0)*guk1i1 + (delta_i0k1-gui0k1)*guk0i1 - (delta_i1k1-gui1k1)*guk0i0;
+                const num ki_d = (gdk1k0-gdk0k1)*(gdi1i0-gdi0i1) + (delta_i1k0-gdi1k0)*gdk1i0 - (delta_i0k0-gdi0k0)*gdk1i1 + (delta_i0k1-gdi0k1)*gdk0i1 - (delta_i1k1-gdi1k1)*gdk0i0;
+                const num part1 = (jku+jkd)*(ij_u+ij_d)+(jiu+jid)*(kj_u+kj_d)+(jju+jjd)*(ki_u+ki_d);
+
+                const num part2u = (delta_i1k0-gui1k0)*guk1j0*(delta_i0j1-guj1i0) - (delta_i1k1-gui1k1)*guk0j0*(delta_i0j1-guj1i0) 
+                                  -(delta_i0k0-gui0k0)*guk1j0*(delta_i1j1-guj1i1) - (delta_i1k0-gui1k0)*guk1j1*(delta_i0j0-guj0i0) 
+                                  +(delta_i0k1-gui0k1)*guk0j0*(delta_i1j1-guj1i1) + (delta_i1k1-gui1k1)*guk0j1*(delta_i0j0-guj0i0) 
+                                  +(delta_i0k0-gui0k0)*guk1j1*(delta_i1j0-guj0i1) - (delta_i0k1-gui0k1)*guk0j1*(delta_i1j0-guj0i1);
+
+                const num part2d = (delta_i1k0-gdi1k0)*gdk1j0*(delta_i0j1-gdj1i0) - (delta_i1k1-gdi1k1)*gdk0j0*(delta_i0j1-gdj1i0) 
+                                  -(delta_i0k0-gdi0k0)*gdk1j0*(delta_i1j1-gdj1i1) - (delta_i1k0-gdi1k0)*gdk1j1*(delta_i0j0-gdj0i0) 
+                                  +(delta_i0k1-gdi0k1)*gdk0j0*(delta_i1j1-gdj1i1) + (delta_i1k1-gdi1k1)*gdk0j1*(delta_i0j0-gdj0i0) 
+                                  +(delta_i0k0-gdi0k0)*gdk1j1*(delta_i1j0-gdj0i1) - (delta_i0k1-gdi0k1)*gdk0j1*(delta_i1j0-gdj0i1);
+
+                const num part3u = guk1i0*gui1j0*(delta_j1k0-guj1k0) - guk0i0*gui1j0*(delta_j1k1-guj1k1) - guk1i1*gui0j0*(delta_j1k0-guj1k0) 
+                                 - guk1i0*gui1j1*(delta_j0k0-guj0k0) + guk0i1*gui0j0*(delta_j1k1-guj1k1) + guk0i0*gui1j1*(delta_j0k1-guj0k1) 
+                                 + guk1i1*gui0j1*(delta_j0k0-guj0k0) - guk0i1*gui0j1*(delta_j0k1-guj0k1);
+
+                const num part3d = gdk1i0*gdi1j0*(delta_j1k0-gdj1k0) - gdk0i0*gdi1j0*(delta_j1k1-gdj1k1) - gdk1i1*gdi0j0*(delta_j1k0-gdj1k0) 
+                                 - gdk1i0*gdi1j1*(delta_j0k0-gdj0k0) + gdk0i1*gdi0j0*(delta_j1k1-gdj1k1) + gdk0i0*gdi1j1*(delta_j0k1-gdj0k1) 
+                                 + gdk1i1*gdi0j1*(delta_j0k0-gdj0k0) - gdk0i1*gdi0j1*(delta_j0k1-gdj0k1);
+		const num meas=-2*jjju -2*jjjd +part1 -part2u -part2d +part3u +part3d;
+                factor1 = p->integral_kernel[(t+dt)*(L+2) + t]; 
+                factor2 = p->integral_kernel[     t*(L+2) + (t+1+dt)]; 
+                factor3 = p->integral_kernel[(t+dt)*(L+2) + (L+1)];
+                //printf("%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, meas, factor1, factor2);
+                if (bbb1 != -1){
+                    m->jjj_l[bbb1 + num_bbb*(t+dt)] += pre1*meas*factor1;}
+                if (bbb2 != -1){
+                    m->jjj_l[bbb2 + num_bbb*t] += pre2*meas*factor2;}
+                if ( (t==0) && (bbb3 != -1) ){
+                    m->jjj_l[bbb3 + num_bbb*(t+dt)] += pre3*meas*factor3;}
         }
         }
 	}
