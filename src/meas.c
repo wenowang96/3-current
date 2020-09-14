@@ -615,11 +615,12 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
 	m->n_sample++;
 	m->sign += phase;
 	const int N = p->N, L = p->L, num_i = p->num_i, num_ij = p->num_ij;
-	const int num_b = p->num_b, num_bs = p->num_bs, num_bb = p->num_bb, num_bbb = p->num_bbb;
+	const int num_b = p->num_b, num_bs = p->num_bs, num_bb = p->num_bb, num_bbb = p->num_bbb, num_bbb_lim = p->num_bbb_lim;
 	const int meas_bond_corr = p->meas_bond_corr;
 	const int meas_energy_corr = p->meas_energy_corr;
 	const int meas_nematic_corr = p->meas_nematic_corr;
         const int meas_3curr = p->meas_3curr;
+        const int meas_3curr_limit = p-> meas_3curr_limit;
 
 
 	const num *const restrict Gu00 = Gu;
@@ -1085,81 +1086,256 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
 		const num gdi0k1 = Gd0t_dt[i0 + k1*N];
 		const num gdi1k1 = Gd0t_dt[i1 + k1*N];
 
-		const num meas= 
-+1*(+(delta_i1k0-gui1k0)*guk1i0*(-guj1j0)-(delta_i1k0-gui1k0)*guk1j0*(delta_i0j1-guj1i0)+(delta_j1k0-guj1k0)*guk1i0*gui1j0+(delta_j1k0-guj1k0)*guk1j0*(-gui1i0)+(-guk1k0)*(-gui1i0)*(-guj1j0)+(-guk1k0)*(delta_i0j1-guj1i0)*gui1j0)
-+1*(+(delta_i1k0-gui1k0)*guk1i0*(-gdj1j0)+(-guk1k0)*(-gui1i0)*(-gdj1j0))
--1*(+(delta_i1k0-gui1k0)*guk1i0*(-guj0j1)-(delta_i1k0-gui1k0)*guk1j1*(delta_i0j0-guj0i0)+(delta_j0k0-guj0k0)*guk1i0*gui1j1+(delta_j0k0-guj0k0)*guk1j1*(-gui1i0)+(-guk1k0)*(-gui1i0)*(-guj0j1)+(-guk1k0)*(delta_i0j0-guj0i0)*gui1j1)
--1*(+(delta_i1k0-gui1k0)*guk1i0*(-gdj0j1)+(-guk1k0)*(-gui1i0)*(-gdj0j1))
-+1*(+(delta_j1k0-guj1k0)*guk1j0*(-gdi1i0)+(-guk1k0)*(-gdi1i0)*(-guj1j0))
-+1*(+(-guk1k0)*(-gdi1i0)*(-gdj1j0)+(-guk1k0)*(delta_i0j1-gdj1i0)*gdi1j0)
--1*(+(delta_j0k0-guj0k0)*guk1j1*(-gdi1i0)+(-guk1k0)*(-gdi1i0)*(-guj0j1))
--1*(+(-guk1k0)*(-gdi1i0)*(-gdj0j1)+(-guk1k0)*(delta_i0j0-gdj0i0)*gdi1j1)
--1*(+(delta_i0k0-gui0k0)*guk1i1*(-guj1j0)-(delta_i0k0-gui0k0)*guk1j0*(delta_i1j1-guj1i1)+(delta_j1k0-guj1k0)*guk1i1*gui0j0+(delta_j1k0-guj1k0)*guk1j0*(-gui0i1)+(-guk1k0)*(-gui0i1)*(-guj1j0)+(-guk1k0)*(delta_i1j1-guj1i1)*gui0j0)
--1*(+(delta_i0k0-gui0k0)*guk1i1*(-gdj1j0)+(-guk1k0)*(-gui0i1)*(-gdj1j0))
-+1*(+(delta_i0k0-gui0k0)*guk1i1*(-guj0j1)-(delta_i0k0-gui0k0)*guk1j1*(delta_i1j0-guj0i1)+(delta_j0k0-guj0k0)*guk1i1*gui0j1+(delta_j0k0-guj0k0)*guk1j1*(-gui0i1)+(-guk1k0)*(-gui0i1)*(-guj0j1)+(-guk1k0)*(delta_i1j0-guj0i1)*gui0j1)
-+1*(+(delta_i0k0-gui0k0)*guk1i1*(-gdj0j1)+(-guk1k0)*(-gui0i1)*(-gdj0j1))
--1*(+(delta_j1k0-guj1k0)*guk1j0*(-gdi0i1)+(-guk1k0)*(-gdi0i1)*(-guj1j0))
--1*(+(-guk1k0)*(-gdi0i1)*(-gdj1j0)+(-guk1k0)*(delta_i1j1-gdj1i1)*gdi0j0)
-+1*(+(delta_j0k0-guj0k0)*guk1j1*(-gdi0i1)+(-guk1k0)*(-gdi0i1)*(-guj0j1))
-+1*(+(-guk1k0)*(-gdi0i1)*(-gdj0j1)+(-guk1k0)*(delta_i1j0-gdj0i1)*gdi0j1)
-+1*(+(-gdk1k0)*(-gui1i0)*(-guj1j0)+(-gdk1k0)*(delta_i0j1-guj1i0)*gui1j0)
-+1*(+(delta_j1k0-gdj1k0)*gdk1j0*(-gui1i0)+(-gdk1k0)*(-gui1i0)*(-gdj1j0))
--1*(+(-gdk1k0)*(-gui1i0)*(-guj0j1)+(-gdk1k0)*(delta_i0j0-guj0i0)*gui1j1)
--1*(+(delta_j0k0-gdj0k0)*gdk1j1*(-gui1i0)+(-gdk1k0)*(-gui1i0)*(-gdj0j1))
-+1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-guj1j0)+(-gdk1k0)*(-gdi1i0)*(-guj1j0))
-+1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-gdj1j0)-(delta_i1k0-gdi1k0)*gdk1j0*(delta_i0j1-gdj1i0)+(delta_j1k0-gdj1k0)*gdk1i0*gdi1j0+(delta_j1k0-gdj1k0)*gdk1j0*(-gdi1i0)+(-gdk1k0)*(-gdi1i0)*(-gdj1j0)+(-gdk1k0)*(delta_i0j1-gdj1i0)*gdi1j0)
--1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-guj0j1)+(-gdk1k0)*(-gdi1i0)*(-guj0j1))
--1*(+(delta_i1k0-gdi1k0)*gdk1i0*(-gdj0j1)-(delta_i1k0-gdi1k0)*gdk1j1*(delta_i0j0-gdj0i0)+(delta_j0k0-gdj0k0)*gdk1i0*gdi1j1+(delta_j0k0-gdj0k0)*gdk1j1*(-gdi1i0)+(-gdk1k0)*(-gdi1i0)*(-gdj0j1)+(-gdk1k0)*(delta_i0j0-gdj0i0)*gdi1j1)
--1*(+(-gdk1k0)*(-gui0i1)*(-guj1j0)+(-gdk1k0)*(delta_i1j1-guj1i1)*gui0j0)
--1*(+(delta_j1k0-gdj1k0)*gdk1j0*(-gui0i1)+(-gdk1k0)*(-gui0i1)*(-gdj1j0))
-+1*(+(-gdk1k0)*(-gui0i1)*(-guj0j1)+(-gdk1k0)*(delta_i1j0-guj0i1)*gui0j1)
-+1*(+(delta_j0k0-gdj0k0)*gdk1j1*(-gui0i1)+(-gdk1k0)*(-gui0i1)*(-gdj0j1))
--1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-guj1j0)+(-gdk1k0)*(-gdi0i1)*(-guj1j0))
--1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-gdj1j0)-(delta_i0k0-gdi0k0)*gdk1j0*(delta_i1j1-gdj1i1)+(delta_j1k0-gdj1k0)*gdk1i1*gdi0j0+(delta_j1k0-gdj1k0)*gdk1j0*(-gdi0i1)+(-gdk1k0)*(-gdi0i1)*(-gdj1j0)+(-gdk1k0)*(delta_i1j1-gdj1i1)*gdi0j0)
-+1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-guj0j1)+(-gdk1k0)*(-gdi0i1)*(-guj0j1))
-+1*(+(delta_i0k0-gdi0k0)*gdk1i1*(-gdj0j1)-(delta_i0k0-gdi0k0)*gdk1j1*(delta_i1j0-gdj0i1)+(delta_j0k0-gdj0k0)*gdk1i1*gdi0j1+(delta_j0k0-gdj0k0)*gdk1j1*(-gdi0i1)+(-gdk1k0)*(-gdi0i1)*(-gdj0j1)+(-gdk1k0)*(delta_i1j0-gdj0i1)*gdi0j1)
--1*(+(delta_i1k1-gui1k1)*guk0i0*(-guj1j0)-(delta_i1k1-gui1k1)*guk0j0*(delta_i0j1-guj1i0)+(delta_j1k1-guj1k1)*guk0i0*gui1j0+(delta_j1k1-guj1k1)*guk0j0*(-gui1i0)+(-guk0k1)*(-gui1i0)*(-guj1j0)+(-guk0k1)*(delta_i0j1-guj1i0)*gui1j0)
--1*(+(delta_i1k1-gui1k1)*guk0i0*(-gdj1j0)+(-guk0k1)*(-gui1i0)*(-gdj1j0))
-+1*(+(delta_i1k1-gui1k1)*guk0i0*(-guj0j1)-(delta_i1k1-gui1k1)*guk0j1*(delta_i0j0-guj0i0)+(delta_j0k1-guj0k1)*guk0i0*gui1j1+(delta_j0k1-guj0k1)*guk0j1*(-gui1i0)+(-guk0k1)*(-gui1i0)*(-guj0j1)+(-guk0k1)*(delta_i0j0-guj0i0)*gui1j1)
-+1*(+(delta_i1k1-gui1k1)*guk0i0*(-gdj0j1)+(-guk0k1)*(-gui1i0)*(-gdj0j1))
--1*(+(delta_j1k1-guj1k1)*guk0j0*(-gdi1i0)+(-guk0k1)*(-gdi1i0)*(-guj1j0))
--1*(+(-guk0k1)*(-gdi1i0)*(-gdj1j0)+(-guk0k1)*(delta_i0j1-gdj1i0)*gdi1j0)
-+1*(+(delta_j0k1-guj0k1)*guk0j1*(-gdi1i0)+(-guk0k1)*(-gdi1i0)*(-guj0j1))
-+1*(+(-guk0k1)*(-gdi1i0)*(-gdj0j1)+(-guk0k1)*(delta_i0j0-gdj0i0)*gdi1j1)
-+1*(+(delta_i0k1-gui0k1)*guk0i1*(-guj1j0)-(delta_i0k1-gui0k1)*guk0j0*(delta_i1j1-guj1i1)+(delta_j1k1-guj1k1)*guk0i1*gui0j0+(delta_j1k1-guj1k1)*guk0j0*(-gui0i1)+(-guk0k1)*(-gui0i1)*(-guj1j0)+(-guk0k1)*(delta_i1j1-guj1i1)*gui0j0)
-+1*(+(delta_i0k1-gui0k1)*guk0i1*(-gdj1j0)+(-guk0k1)*(-gui0i1)*(-gdj1j0))
--1*(+(delta_i0k1-gui0k1)*guk0i1*(-guj0j1)-(delta_i0k1-gui0k1)*guk0j1*(delta_i1j0-guj0i1)+(delta_j0k1-guj0k1)*guk0i1*gui0j1+(delta_j0k1-guj0k1)*guk0j1*(-gui0i1)+(-guk0k1)*(-gui0i1)*(-guj0j1)+(-guk0k1)*(delta_i1j0-guj0i1)*gui0j1)
--1*(+(delta_i0k1-gui0k1)*guk0i1*(-gdj0j1)+(-guk0k1)*(-gui0i1)*(-gdj0j1))
-+1*(+(delta_j1k1-guj1k1)*guk0j0*(-gdi0i1)+(-guk0k1)*(-gdi0i1)*(-guj1j0))
-+1*(+(-guk0k1)*(-gdi0i1)*(-gdj1j0)+(-guk0k1)*(delta_i1j1-gdj1i1)*gdi0j0)
--1*(+(delta_j0k1-guj0k1)*guk0j1*(-gdi0i1)+(-guk0k1)*(-gdi0i1)*(-guj0j1))
--1*(+(-guk0k1)*(-gdi0i1)*(-gdj0j1)+(-guk0k1)*(delta_i1j0-gdj0i1)*gdi0j1)
--1*(+(-gdk0k1)*(-gui1i0)*(-guj1j0)+(-gdk0k1)*(delta_i0j1-guj1i0)*gui1j0)
--1*(+(delta_j1k1-gdj1k1)*gdk0j0*(-gui1i0)+(-gdk0k1)*(-gui1i0)*(-gdj1j0))
-+1*(+(-gdk0k1)*(-gui1i0)*(-guj0j1)+(-gdk0k1)*(delta_i0j0-guj0i0)*gui1j1)
-+1*(+(delta_j0k1-gdj0k1)*gdk0j1*(-gui1i0)+(-gdk0k1)*(-gui1i0)*(-gdj0j1))
--1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-guj1j0)+(-gdk0k1)*(-gdi1i0)*(-guj1j0))
--1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-gdj1j0)-(delta_i1k1-gdi1k1)*gdk0j0*(delta_i0j1-gdj1i0)+(delta_j1k1-gdj1k1)*gdk0i0*gdi1j0+(delta_j1k1-gdj1k1)*gdk0j0*(-gdi1i0)+(-gdk0k1)*(-gdi1i0)*(-gdj1j0)+(-gdk0k1)*(delta_i0j1-gdj1i0)*gdi1j0)
-+1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-guj0j1)+(-gdk0k1)*(-gdi1i0)*(-guj0j1))
-+1*(+(delta_i1k1-gdi1k1)*gdk0i0*(-gdj0j1)-(delta_i1k1-gdi1k1)*gdk0j1*(delta_i0j0-gdj0i0)+(delta_j0k1-gdj0k1)*gdk0i0*gdi1j1+(delta_j0k1-gdj0k1)*gdk0j1*(-gdi1i0)+(-gdk0k1)*(-gdi1i0)*(-gdj0j1)+(-gdk0k1)*(delta_i0j0-gdj0i0)*gdi1j1)
-+1*(+(-gdk0k1)*(-gui0i1)*(-guj1j0)+(-gdk0k1)*(delta_i1j1-guj1i1)*gui0j0)
-+1*(+(delta_j1k1-gdj1k1)*gdk0j0*(-gui0i1)+(-gdk0k1)*(-gui0i1)*(-gdj1j0))
--1*(+(-gdk0k1)*(-gui0i1)*(-guj0j1)+(-gdk0k1)*(delta_i1j0-guj0i1)*gui0j1)
--1*(+(delta_j0k1-gdj0k1)*gdk0j1*(-gui0i1)+(-gdk0k1)*(-gui0i1)*(-gdj0j1))
-+1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-guj1j0)+(-gdk0k1)*(-gdi0i1)*(-guj1j0))
-+1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-gdj1j0)-(delta_i0k1-gdi0k1)*gdk0j0*(delta_i1j1-gdj1i1)+(delta_j1k1-gdj1k1)*gdk0i1*gdi0j0+(delta_j1k1-gdj1k1)*gdk0j0*(-gdi0i1)+(-gdk0k1)*(-gdi0i1)*(-gdj1j0)+(-gdk0k1)*(delta_i1j1-gdj1i1)*gdi0j0)
--1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-guj0j1)+(-gdk0k1)*(-gdi0i1)*(-guj0j1))
--1*(+(delta_i0k1-gdi0k1)*gdk0i1*(-gdj0j1)-(delta_i0k1-gdi0k1)*gdk0j1*(delta_i1j0-gdj0i1)+(delta_j0k1-gdj0k1)*gdk0i1*gdi0j1+(delta_j0k1-gdj0k1)*gdk0j1*(-gdi0i1)+(-gdk0k1)*(-gdi0i1)*(-gdj0j1)+(-gdk0k1)*(delta_i1j0-gdj0i1)*gdi0j1)	
-;
-	if((t==0)&&(dt!=0)){factor1 = 0.5; factor2 = 1;}
-        if((t!=0)&&(dt!=0)){factor1 = 1; factor2 = 1;}
-	if((t==0)&&(dt==0)){factor1 = 0; factor2 = 0.5;}
-	if((t!=0)&&(dt==0)){factor1 = 0.5; factor2 = 0.5;}
-	//printf("%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, meas, factor1, factor2);
-        m->jjj[bbb1 + num_bbb*(t+dt)] += pre1*meas*factor1;
-        m->jjj[bbb2 + num_bbb*t] += pre2*meas*factor2;
-	if (t==0)
-	m->jjj[bbb3 + num_bbb*(t+dt)] += pre3*meas*0.5;
+		const num jku =  (guk0k1-guk1k0);
+                const num jkd =  (gdk0k1-gdk1k0);
+                const num jiu =  (gui0i1-gui1i0);
+                const num jid =  (gdi0i1-gdi1i0);
+                const num jju =  (guj0j1-guj1j0);
+                const num jjd =  (gdj0j1-gdj1j0);
+
+                const num jjju = jku*jiu*jju;
+                const num jjjd = jkd*jid*jjd;
+
+                const num ij_u = (gui1i0-gui0i1)*(guj1j0-guj0j1) + (delta_i0j1-guj1i0)*gui1j0 - (delta_i0j0-guj0i0)*gui1j1 + (delta_i1j0-guj0i1)*gui0j1 - (delta_i1j1-guj1i1)*gui0j0;
+                const num ij_d = (gdi1i0-gdi0i1)*(gdj1j0-gdj0j1) + (delta_i0j1-gdj1i0)*gdi1j0 - (delta_i0j0-gdj0i0)*gdi1j1 + (delta_i1j0-gdj0i1)*gdi0j1 - (delta_i1j1-gdj1i1)*gdi0j0;
+                const num kj_u = (guk1k0-guk0k1)*(guj1j0-guj0j1) + (delta_j1k0-guj1k0)*guk1j0 - (delta_j0k0-guj0k0)*guk1j1 + (delta_j0k1-guj0k1)*guk0j1 - (delta_j1k1-guj1k1)*guk0j0;
+                const num kj_d = (gdk1k0-gdk0k1)*(gdj1j0-gdj0j1) + (delta_j1k0-gdj1k0)*gdk1j0 - (delta_j0k0-gdj0k0)*gdk1j1 + (delta_j0k1-gdj0k1)*gdk0j1 - (delta_j1k1-gdj1k1)*gdk0j0;
+                const num ki_u = (guk1k0-guk0k1)*(gui1i0-gui0i1) + (delta_i1k0-gui1k0)*guk1i0 - (delta_i0k0-gui0k0)*guk1i1 + (delta_i0k1-gui0k1)*guk0i1 - (delta_i1k1-gui1k1)*guk0i0;
+                const num ki_d = (gdk1k0-gdk0k1)*(gdi1i0-gdi0i1) + (delta_i1k0-gdi1k0)*gdk1i0 - (delta_i0k0-gdi0k0)*gdk1i1 + (delta_i0k1-gdi0k1)*gdk0i1 - (delta_i1k1-gdi1k1)*gdk0i0;
+                const num part1 = (jku+jkd)*(ij_u+ij_d)+(jiu+jid)*(kj_u+kj_d)+(jju+jjd)*(ki_u+ki_d);
+
+                const num part2u = (delta_i1k0-gui1k0)*guk1j0*(delta_i0j1-guj1i0) - (delta_i1k1-gui1k1)*guk0j0*(delta_i0j1-guj1i0) 
+                                  -(delta_i0k0-gui0k0)*guk1j0*(delta_i1j1-guj1i1) - (delta_i1k0-gui1k0)*guk1j1*(delta_i0j0-guj0i0) 
+                                  +(delta_i0k1-gui0k1)*guk0j0*(delta_i1j1-guj1i1) + (delta_i1k1-gui1k1)*guk0j1*(delta_i0j0-guj0i0) 
+                                  +(delta_i0k0-gui0k0)*guk1j1*(delta_i1j0-guj0i1) - (delta_i0k1-gui0k1)*guk0j1*(delta_i1j0-guj0i1);
+
+                const num part2d = (delta_i1k0-gdi1k0)*gdk1j0*(delta_i0j1-gdj1i0) - (delta_i1k1-gdi1k1)*gdk0j0*(delta_i0j1-gdj1i0) 
+                                  -(delta_i0k0-gdi0k0)*gdk1j0*(delta_i1j1-gdj1i1) - (delta_i1k0-gdi1k0)*gdk1j1*(delta_i0j0-gdj0i0) 
+                                  +(delta_i0k1-gdi0k1)*gdk0j0*(delta_i1j1-gdj1i1) + (delta_i1k1-gdi1k1)*gdk0j1*(delta_i0j0-gdj0i0) 
+                                  +(delta_i0k0-gdi0k0)*gdk1j1*(delta_i1j0-gdj0i1) - (delta_i0k1-gdi0k1)*gdk0j1*(delta_i1j0-gdj0i1);
+
+                const num part3u = guk1i0*gui1j0*(delta_j1k0-guj1k0) - guk0i0*gui1j0*(delta_j1k1-guj1k1) - guk1i1*gui0j0*(delta_j1k0-guj1k0) 
+                                 - guk1i0*gui1j1*(delta_j0k0-guj0k0) + guk0i1*gui0j0*(delta_j1k1-guj1k1) + guk0i0*gui1j1*(delta_j0k1-guj0k1) 
+                                 + guk1i1*gui0j1*(delta_j0k0-guj0k0) - guk0i1*gui0j1*(delta_j0k1-guj0k1);
+
+                const num part3d = gdk1i0*gdi1j0*(delta_j1k0-gdj1k0) - gdk0i0*gdi1j0*(delta_j1k1-gdj1k1) - gdk1i1*gdi0j0*(delta_j1k0-gdj1k0) 
+                                 - gdk1i0*gdi1j1*(delta_j0k0-gdj0k0) + gdk0i1*gdi0j0*(delta_j1k1-gdj1k1) + gdk0i0*gdi1j1*(delta_j0k1-gdj0k1) 
+                                 + gdk1i1*gdi0j1*(delta_j0k0-gdj0k0) - gdk0i1*gdi0j1*(delta_j0k1-gdj0k1);
+		const num meas=-2*jjju -2*jjjd +part1 -part2u -part2d +part3u +part3d;
+                if((t==0)&&(dt!=0)){factor1 = 0.5; factor2 = 1;}
+                if((t!=0)&&(dt!=0)){factor1 = 1; factor2 = 1;}
+                if((t==0)&&(dt==0)){factor1 = 0; factor2 = 0.5;}
+                if((t!=0)&&(dt==0)){factor1 = 0.5; factor2 = 0.5;}
+                //printf("%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, meas, factor1, factor2);
+                m->jjj[bbb1 + num_bbb*(t+dt)] += pre1*meas*factor1;
+                m->jjj[bbb2 + num_bbb*t] += pre2*meas*factor2;
+                if (t==0)
+                m->jjj[bbb3 + num_bbb*(t+dt)] += pre3*meas*0.5;
+        }
+        }
+	}
+	}
+        }
+        
+        // This is only for none-tp case.
+        // If consider tp and want to improve the speed by removing some measurements, please use a mark matrix to rule out the specific measurements.
+        // It is also a good idea to just use the original 3-current measurments since the "unnecessary" measurements may be used in the future.
+        if (meas_3curr_limit)
+	#pragma omp parallel for
+	for (int t = 0; t < L; t++) {
+                num factor1 = 1.0;
+		num factor2 = 1.0;
+                num factor3 = 1.0;
+                const int delta_t = (t == 0);
+		const num *const restrict Gu0t_t = Gu + N*N*(0+L*t);
+		const num *const restrict Gutt_t = Gu + N*N*(t+L*t);
+		const num *const restrict Gut0_t = Gu + N*N*(t+L*0);
+		const num *const restrict Gd0t_t = Gd + N*N*(0+L*t);
+		const num *const restrict Gdtt_t = Gd + N*N*(t+L*t);
+		const num *const restrict Gdt0_t = Gd + N*N*(t+L*0);
+        for (int dt = 0; (t+dt) < L; dt++) {
+		const num *const restrict Gu0t_dt = Gu + N*N*(t+L*(dt+t));
+		const num *const restrict Gutt_dt = Gu + N*N*(dt+t+L*(dt+t));
+		const num *const restrict Gut0_dt = Gu + N*N*(dt+t+L*t);
+		const num *const restrict Gd0t_dt = Gd + N*N*(t+L*(dt+t));
+		const num *const restrict Gdtt_dt = Gd + N*N*(dt+t+L*(dt+t));
+		const num *const restrict Gdt0_dt = Gd + N*N*(dt+t+L*t);
+                const int delta_dt = (dt == 0);
+                const num *const restrict Gu0t_tdt = Gu + N*N*(0+L*(t+dt));
+		const num *const restrict Gutt_tdt = Gu + N*N*(t+dt+L*(t+dt));
+		const num *const restrict Gut0_tdt = Gu + N*N*(t+dt+L*0);
+		const num *const restrict Gd0t_tdt = Gd + N*N*(0+L*(t+dt));
+		const num *const restrict Gdtt_tdt = Gd + N*N*(t+dt+L*(t+dt));
+		const num *const restrict Gdt0_tdt = Gd + N*N*(t+dt+L*0);
+                const int delta_tdt = delta_t*delta_dt;
+	for (int c = 0; c < num_b; c++) {
+		const int j0 = p->bonds[c];
+		const int j1 = p->bonds[c + num_b];
+	for (int b1 = 0; b1 < num_b; b1++) {
+		const int i0 = p->bonds[b1];
+		const int i1 = p->bonds[b1 + num_b];
+        for (int b2 = 0; b2 < num_b; b2++) {
+		const int k0 = p->bonds[b2];
+		const int k1 = p->bonds[b2 + num_b];
+                
+		const int bbb1 = p->map_bbb_lim[b2 + b1*num_b + c*num_b*num_b];
+                const int bbb2 = p->map_bbb_lim[b1 + b2*num_b + c*num_b*num_b];
+		const int bbb3 = p->map_bbb_lim[b2 + c*num_b + b1*num_b*num_b];
+                // If none of the bondbondbond types is of interest, don't measure
+                if ((bbb1 == -1) && (bbb2 == -1) && (bbb3 == -1)){
+                    continue;}
+                // This condition is because bbb3 is only for the internal integral at tau'=beta
+                // even if the bond bbb3 is of interest, we don't measure the unnecessary time difference types of correlations
+                // we only want t==0 for bbb3 != -1
+                if ((bbb1 == -1) && (bbb2 == -1) && (bbb3 != -1) && (t!=0)){
+                    continue;}
+                
+                num pre1=0.0;
+                num pre2=0.0;
+                num pre3=0.0; 
+		if (bbb1 != -1){
+                    pre1 = phase / p->degen_bbb_lim[bbb1];}
+                if (bbb2 != -1){
+                    pre2 = phase / p->degen_bbb_lim[bbb2];}
+                if (bbb3 != -1){
+		    pre3 = phase / p->degen_bbb_lim[bbb3];}
+                
+		const int delta_i0k0 = (i0 == k0)*delta_dt;
+		const int delta_i1k0 = (i1 == k0)*delta_dt;
+		const int delta_i0k1 = (i0 == k1)*delta_dt;
+		const int delta_i1k1 = (i1 == k1)*delta_dt;
+		
+                const int delta_i0j0 = (j0 == i0)*delta_t;
+		const int delta_i0j1 = (j1 == i0)*delta_t;
+		const int delta_i1j0 = (j0 == i1)*delta_t;
+		const int delta_i1j1 = (j1 == i1)*delta_t;
+                
+                const int delta_j0k0 = (k0 == j0)*delta_tdt;
+		const int delta_j0k1 = (k1 == j0)*delta_tdt;
+		const int delta_j1k0 = (k0 == j1)*delta_tdt;
+		const int delta_j1k1 = (k1 == j1)*delta_tdt;
+                
+		const num gui0i0 = Gutt_t[i0 + i0*N];
+		const num gui1i0 = Gutt_t[i1 + i0*N];
+		const num gui0i1 = Gutt_t[i0 + i1*N];
+		const num gui1i1 = Gutt_t[i1 + i1*N];
+		const num gui0j0 = Gut0_t[i0 + j0*N];
+		const num gui1j0 = Gut0_t[i1 + j0*N];
+		const num gui0j1 = Gut0_t[i0 + j1*N];
+		const num gui1j1 = Gut0_t[i1 + j1*N];
+		const num guj0i0 = Gu0t_t[j0 + i0*N];
+		const num guj1i0 = Gu0t_t[j1 + i0*N];
+		const num guj0i1 = Gu0t_t[j0 + i1*N];
+		const num guj1i1 = Gu0t_t[j1 + i1*N];
+		const num guj0j0 = Gu00[j0 + j0*N];
+		const num guj1j0 = Gu00[j1 + j0*N];
+		const num guj0j1 = Gu00[j0 + j1*N];
+		const num guj1j1 = Gu00[j1 + j1*N];
+		const num gdi0i0 = Gdtt_t[i0 + i0*N];
+		const num gdi1i0 = Gdtt_t[i1 + i0*N];
+		const num gdi0i1 = Gdtt_t[i0 + i1*N];
+		const num gdi1i1 = Gdtt_t[i1 + i1*N];
+		const num gdi0j0 = Gdt0_t[i0 + j0*N];
+		const num gdi1j0 = Gdt0_t[i1 + j0*N];
+		const num gdi0j1 = Gdt0_t[i0 + j1*N];
+		const num gdi1j1 = Gdt0_t[i1 + j1*N];
+		const num gdj0i0 = Gd0t_t[j0 + i0*N];
+		const num gdj1i0 = Gd0t_t[j1 + i0*N];
+		const num gdj0i1 = Gd0t_t[j0 + i1*N];
+		const num gdj1i1 = Gd0t_t[j1 + i1*N];
+		const num gdj0j0 = Gd00[j0 + j0*N];
+		const num gdj1j0 = Gd00[j1 + j0*N];
+		const num gdj0j1 = Gd00[j0 + j1*N];
+		const num gdj1j1 = Gd00[j1 + j1*N];
+                                           
+                const num guk0k0 = Gutt_tdt[k0 + k0*N];
+		const num guk1k0 = Gutt_tdt[k1 + k0*N];
+		const num guk0k1 = Gutt_tdt[k0 + k1*N];
+		const num guk1k1 = Gutt_tdt[k1 + k1*N];
+		const num guk0j0 = Gut0_tdt[k0 + j0*N];
+		const num guk1j0 = Gut0_tdt[k1 + j0*N];
+		const num guk0j1 = Gut0_tdt[k0 + j1*N];
+		const num guk1j1 = Gut0_tdt[k1 + j1*N];
+		const num guj0k0 = Gu0t_tdt[j0 + k0*N];
+		const num guj1k0 = Gu0t_tdt[j1 + k0*N];
+		const num guj0k1 = Gu0t_tdt[j0 + k1*N];
+		const num guj1k1 = Gu0t_tdt[j1 + k1*N];
+		const num gdk0k0 = Gdtt_tdt[k0 + k0*N];
+		const num gdk1k0 = Gdtt_tdt[k1 + k0*N];
+		const num gdk0k1 = Gdtt_tdt[k0 + k1*N];
+		const num gdk1k1 = Gdtt_tdt[k1 + k1*N];
+		const num gdk0j0 = Gdt0_tdt[k0 + j0*N];
+		const num gdk1j0 = Gdt0_tdt[k1 + j0*N];
+		const num gdk0j1 = Gdt0_tdt[k0 + j1*N];
+		const num gdk1j1 = Gdt0_tdt[k1 + j1*N];
+		const num gdj0k0 = Gd0t_tdt[j0 + k0*N];
+		const num gdj1k0 = Gd0t_tdt[j1 + k0*N];
+		const num gdj0k1 = Gd0t_tdt[j0 + k1*N];
+		const num gdj1k1 = Gd0t_tdt[j1 + k1*N];
+
+		const num guk0i0 = Gut0_dt[k0 + i0*N];
+		const num guk1i0 = Gut0_dt[k1 + i0*N];
+		const num guk0i1 = Gut0_dt[k0 + i1*N];
+		const num guk1i1 = Gut0_dt[k1 + i1*N];
+		const num gui0k0 = Gu0t_dt[i0 + k0*N];
+		const num gui1k0 = Gu0t_dt[i1 + k0*N];
+		const num gui0k1 = Gu0t_dt[i0 + k1*N];
+		const num gui1k1 = Gu0t_dt[i1 + k1*N];
+		const num gdk0i0 = Gdt0_dt[k0 + i0*N];
+		const num gdk1i0 = Gdt0_dt[k1 + i0*N];
+		const num gdk0i1 = Gdt0_dt[k0 + i1*N];
+		const num gdk1i1 = Gdt0_dt[k1 + i1*N];
+		const num gdi0k0 = Gd0t_dt[i0 + k0*N];
+		const num gdi1k0 = Gd0t_dt[i1 + k0*N];
+		const num gdi0k1 = Gd0t_dt[i0 + k1*N];
+		const num gdi1k1 = Gd0t_dt[i1 + k1*N];
+
+                const num jku =  (guk0k1-guk1k0);
+                const num jkd =  (gdk0k1-gdk1k0);
+                const num jiu =  (gui0i1-gui1i0);
+                const num jid =  (gdi0i1-gdi1i0);
+                const num jju =  (guj0j1-guj1j0);
+                const num jjd =  (gdj0j1-gdj1j0);
+
+                const num jjju = jku*jiu*jju;
+                const num jjjd = jkd*jid*jjd;
+
+                const num ij_u = (gui1i0-gui0i1)*(guj1j0-guj0j1) + (delta_i0j1-guj1i0)*gui1j0 - (delta_i0j0-guj0i0)*gui1j1 + (delta_i1j0-guj0i1)*gui0j1 - (delta_i1j1-guj1i1)*gui0j0;
+                const num ij_d = (gdi1i0-gdi0i1)*(gdj1j0-gdj0j1) + (delta_i0j1-gdj1i0)*gdi1j0 - (delta_i0j0-gdj0i0)*gdi1j1 + (delta_i1j0-gdj0i1)*gdi0j1 - (delta_i1j1-gdj1i1)*gdi0j0;
+                const num kj_u = (guk1k0-guk0k1)*(guj1j0-guj0j1) + (delta_j1k0-guj1k0)*guk1j0 - (delta_j0k0-guj0k0)*guk1j1 + (delta_j0k1-guj0k1)*guk0j1 - (delta_j1k1-guj1k1)*guk0j0;
+                const num kj_d = (gdk1k0-gdk0k1)*(gdj1j0-gdj0j1) + (delta_j1k0-gdj1k0)*gdk1j0 - (delta_j0k0-gdj0k0)*gdk1j1 + (delta_j0k1-gdj0k1)*gdk0j1 - (delta_j1k1-gdj1k1)*gdk0j0;
+                const num ki_u = (guk1k0-guk0k1)*(gui1i0-gui0i1) + (delta_i1k0-gui1k0)*guk1i0 - (delta_i0k0-gui0k0)*guk1i1 + (delta_i0k1-gui0k1)*guk0i1 - (delta_i1k1-gui1k1)*guk0i0;
+                const num ki_d = (gdk1k0-gdk0k1)*(gdi1i0-gdi0i1) + (delta_i1k0-gdi1k0)*gdk1i0 - (delta_i0k0-gdi0k0)*gdk1i1 + (delta_i0k1-gdi0k1)*gdk0i1 - (delta_i1k1-gdi1k1)*gdk0i0;
+                const num part1 = (jku+jkd)*(ij_u+ij_d)+(jiu+jid)*(kj_u+kj_d)+(jju+jjd)*(ki_u+ki_d);
+
+                const num part2u = (delta_i1k0-gui1k0)*guk1j0*(delta_i0j1-guj1i0) - (delta_i1k1-gui1k1)*guk0j0*(delta_i0j1-guj1i0) 
+                                  -(delta_i0k0-gui0k0)*guk1j0*(delta_i1j1-guj1i1) - (delta_i1k0-gui1k0)*guk1j1*(delta_i0j0-guj0i0) 
+                                  +(delta_i0k1-gui0k1)*guk0j0*(delta_i1j1-guj1i1) + (delta_i1k1-gui1k1)*guk0j1*(delta_i0j0-guj0i0) 
+                                  +(delta_i0k0-gui0k0)*guk1j1*(delta_i1j0-guj0i1) - (delta_i0k1-gui0k1)*guk0j1*(delta_i1j0-guj0i1);
+
+                const num part2d = (delta_i1k0-gdi1k0)*gdk1j0*(delta_i0j1-gdj1i0) - (delta_i1k1-gdi1k1)*gdk0j0*(delta_i0j1-gdj1i0) 
+                                  -(delta_i0k0-gdi0k0)*gdk1j0*(delta_i1j1-gdj1i1) - (delta_i1k0-gdi1k0)*gdk1j1*(delta_i0j0-gdj0i0) 
+                                  +(delta_i0k1-gdi0k1)*gdk0j0*(delta_i1j1-gdj1i1) + (delta_i1k1-gdi1k1)*gdk0j1*(delta_i0j0-gdj0i0) 
+                                  +(delta_i0k0-gdi0k0)*gdk1j1*(delta_i1j0-gdj0i1) - (delta_i0k1-gdi0k1)*gdk0j1*(delta_i1j0-gdj0i1);
+
+                const num part3u = guk1i0*gui1j0*(delta_j1k0-guj1k0) - guk0i0*gui1j0*(delta_j1k1-guj1k1) - guk1i1*gui0j0*(delta_j1k0-guj1k0) 
+                                 - guk1i0*gui1j1*(delta_j0k0-guj0k0) + guk0i1*gui0j0*(delta_j1k1-guj1k1) + guk0i0*gui1j1*(delta_j0k1-guj0k1) 
+                                 + guk1i1*gui0j1*(delta_j0k0-guj0k0) - guk0i1*gui0j1*(delta_j0k1-guj0k1);
+
+                const num part3d = gdk1i0*gdi1j0*(delta_j1k0-gdj1k0) - gdk0i0*gdi1j0*(delta_j1k1-gdj1k1) - gdk1i1*gdi0j0*(delta_j1k0-gdj1k0) 
+                                 - gdk1i0*gdi1j1*(delta_j0k0-gdj0k0) + gdk0i1*gdi0j0*(delta_j1k1-gdj1k1) + gdk0i0*gdi1j1*(delta_j0k1-gdj0k1) 
+                                 + gdk1i1*gdi0j1*(delta_j0k0-gdj0k0) - gdk0i1*gdi0j1*(delta_j0k1-gdj0k1);
+		const num meas=-2*jjju -2*jjjd +part1 -part2u -part2d +part3u +part3d;
+                factor1 = p->integral_kernel[(t+dt)*(L+2) + t]; 
+                factor2 = p->integral_kernel[     t*(L+2) + (t+1+dt)]; 
+                factor3 = p->integral_kernel[(t+dt)*(L+2) + (L+1)];
+                // printf("%f\t%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, factor1, factor2, factor3);
+                if (bbb1 != -1){
+                    m->jjj_l[bbb1 + num_bbb_lim*(t+dt)] += pre1*meas*factor1;}
+                if (bbb2 != -1){
+                    m->jjj_l[bbb2 + num_bbb_lim*t] += pre2*meas*factor2;}
+                if ( (t==0) && (bbb3 != -1) ){
+                    m->jjj_l[bbb3 + num_bbb_lim*(t+dt)] += pre3*meas*factor3;}
         }
         }
 	}

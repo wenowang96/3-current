@@ -42,16 +42,18 @@ int sim_data_read_alloc(struct sim_data *sim, const char *file)
 	my_read(_int, "/params/num_bs", &sim->p.num_bs);
 	my_read(_int, "/params/num_bb", &sim->p.num_bb);
         my_read(_int, "/params/num_bbb", &sim->p.num_bbb);
+        my_read(_int, "/params/num_bbb_lim", &sim->p.num_bbb_lim);
 	my_read(_int, "/params/period_uneqlt", &sim->p.period_uneqlt);
 	my_read(_int, "/params/meas_bond_corr", &sim->p.meas_bond_corr);
 	my_read(_int, "/params/num_bbb", &sim->p.num_bbb);
         my_read(_int, "/params/meas_energy_corr", &sim->p.meas_energy_corr);
 	my_read(_int, "/params/meas_nematic_corr", &sim->p.meas_nematic_corr);
 	my_read(_int, "/params/meas_3curr", &sim->p.meas_3curr);
+        my_read(_int, "/params/meas_3curr_limit", &sim->p.meas_3curr_limit);
 
 	const int N = sim->p.N, L = sim->p.L;
 	const int num_i = sim->p.num_i, num_ij = sim->p.num_ij;
-	const int num_b = sim->p.num_b, num_bs = sim->p.num_bs, num_bb = sim->p.num_bb, num_bbb = sim->p.num_bbb;
+	const int num_b = sim->p.num_b, num_bs = sim->p.num_bs, num_bb = sim->p.num_bb, num_bbb = sim->p.num_bbb, num_bbb_lim = sim->p.num_bbb_lim;
 
 	sim->p.map_i         = my_calloc(N        * sizeof(int));
 	sim->p.map_ij        = my_calloc(N*N      * sizeof(int));
@@ -59,6 +61,8 @@ int sim_data_read_alloc(struct sim_data *sim, const char *file)
 	sim->p.map_bs        = my_calloc(num_b*N  * sizeof(int));
 	sim->p.map_bb        = my_calloc(num_b*num_b * sizeof(int));
         sim->p.map_bbb       = my_calloc(num_b*num_b*num_b * sizeof(int));
+        sim->p.map_bbb_lim   = my_calloc(num_b*num_b*num_b * sizeof(int));
+        sim->p.integral_kernel=my_calloc(L*(L+2)  * sizeof(double));
 	sim->p.peierlsu      = my_calloc(N*N      * sizeof(num));
 	sim->p.peierlsd      = my_calloc(N*N      * sizeof(num));
 //	sim->p.K             = my_calloc(N*N      * sizeof(double));
@@ -68,6 +72,7 @@ int sim_data_read_alloc(struct sim_data *sim, const char *file)
 	sim->p.degen_bs      = my_calloc(num_bs   * sizeof(int));
 	sim->p.degen_bb      = my_calloc(num_bb   * sizeof(int));
 	sim->p.degen_bbb     = my_calloc(num_bbb   * sizeof(int));
+        sim->p.degen_bbb_lim = my_calloc(num_bbb_lim * sizeof(int));
         sim->p.exp_Ku        = my_calloc(N*N      * sizeof(num));
 	sim->p.exp_Kd        = my_calloc(N*N      * sizeof(num));
 	sim->p.inv_exp_Ku    = my_calloc(N*N      * sizeof(num));
@@ -109,6 +114,9 @@ int sim_data_read_alloc(struct sim_data *sim, const char *file)
                 if (sim->p.meas_3curr) {
  			sim->m_ue.jjj = my_calloc(num_bbb*L * sizeof(num));
  		}
+                if (sim->p.meas_3curr_limit) {
+                        sim->m_ue.jjj_l = my_calloc(num_bbb_lim * L * sizeof(num));
+                }
 		if (sim->p.meas_energy_corr) {
 			sim->m_ue.kv      = my_calloc(num_bs*L * sizeof(num));
 			sim->m_ue.kn      = my_calloc(num_bs*L * sizeof(num));
@@ -127,7 +135,9 @@ int sim_data_read_alloc(struct sim_data *sim, const char *file)
 	my_read(_int,    "/params/bonds",          sim->p.bonds);
 	my_read(_int,    "/params/map_bs",         sim->p.map_bs);
 	my_read(_int,    "/params/map_bb",         sim->p.map_bb);
-	my_read(_int,    "/params/map_bbb",         sim->p.map_bbb);
+	my_read(_int,    "/params/map_bbb",        sim->p.map_bbb);
+        my_read(_int,    "/params/map_bbb_lim",    sim->p.map_bbb_lim);
+        my_read(_double, "/params/integral_kernel",sim->p.integral_kernel);
         my_read( , "/params/peierlsu", num_h5t,    sim->p.peierlsu);
 	my_read( , "/params/peierlsd", num_h5t,    sim->p.peierlsd);
 //	my_read(_double, "/params/K",              sim->p.K);
@@ -142,7 +152,8 @@ int sim_data_read_alloc(struct sim_data *sim, const char *file)
 	my_read(_int,    "/params/degen_ij",       sim->p.degen_ij);
 	my_read(_int,    "/params/degen_bs",       sim->p.degen_bs);
 	my_read(_int,    "/params/degen_bb",       sim->p.degen_bb);
-        my_read(_int,    "/params/degen_bbb",       sim->p.degen_bbb);
+        my_read(_int,    "/params/degen_bbb",      sim->p.degen_bbb);
+        my_read(_int,    "/params/degen_bbb_lim",  sim->p.degen_bbb_lim);
 	my_read( , "/params/exp_Ku",     num_h5t,   sim->p.exp_Ku);
 	my_read( , "/params/exp_Kd",     num_h5t,   sim->p.exp_Kd);
 	my_read( , "/params/inv_exp_Ku", num_h5t,   sim->p.inv_exp_Ku);
@@ -192,6 +203,9 @@ int sim_data_read_alloc(struct sim_data *sim, const char *file)
                 if (sim->p.meas_3curr) {
  			my_read(_double, "/meas_uneqlt/jjj", sim->m_ue.jjj);
  		}
+                if (sim->p.meas_3curr_limit) {
+                        my_read(_double, "/meas_uneqlt/jjj_l", sim->m_ue.jjj_l);
+                }
 		if (sim->p.meas_energy_corr) {
 			my_read( , "/meas_uneqlt/kv", num_h5t, sim->m_ue.kv);
 			my_read( , "/meas_uneqlt/kn", num_h5t, sim->m_ue.kn);
@@ -265,6 +279,9 @@ int sim_data_save(const struct sim_data *sim)
                 if (sim->p.meas_3curr) {
  			my_write("/meas_uneqlt/jjj", H5T_NATIVE_DOUBLE, sim->m_ue.jjj);
  		}
+                if (sim->p.meas_3curr_limit) {
+                        my_write("/meas_uneqlt/jjj_l", H5T_NATIVE_DOUBLE, sim->m_ue.jjj_l);
+                }
 		if (sim->p.meas_energy_corr) {
 			my_write("/meas_uneqlt/kv", num_h5t, sim->m_ue.kv);
 			my_write("/meas_uneqlt/kn", num_h5t, sim->m_ue.kn);
@@ -300,6 +317,9 @@ void sim_data_free(const struct sim_data *sim)
                 if (sim->p.meas_3curr) {
  			my_free(sim->m_ue.jjj);
  		}
+                if (sim->p.meas_3curr_limit) {
+                        my_free(sim->m_ue.jjj_l);
+                }
 		if (sim->p.meas_bond_corr) {
 			my_free(sim->m_ue.ksks);
 			my_free(sim->m_ue.kk);
@@ -338,6 +358,7 @@ void sim_data_free(const struct sim_data *sim)
 	my_free(sim->p.inv_exp_Ku);
 	my_free(sim->p.exp_Kd);
 	my_free(sim->p.exp_Ku);
+        my_free(sim->p.degen_bbb_lim);
         my_free(sim->p.degen_bbb);
 	my_free(sim->p.degen_bb);
 	my_free(sim->p.degen_bs);
@@ -347,6 +368,8 @@ void sim_data_free(const struct sim_data *sim)
 //	my_free(sim->p.K);
 	my_free(sim->p.peierlsd);
 	my_free(sim->p.peierlsu);
+        my_free(sim->p.integral_kernel);
+        my_free(sim->p.map_bbb_lim);
 	my_free(sim->p.map_bbb);
         my_free(sim->p.map_bb);
 	my_free(sim->p.map_bs);

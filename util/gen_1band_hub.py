@@ -5,6 +5,7 @@ import time
 import h5py
 import numpy as np
 from scipy.linalg import expm
+from scipy.interpolate import CubicSpline
 
 np.seterr(over="ignore")
 
@@ -58,7 +59,7 @@ def create_1(filename=None, overwrite=False, seed=None,
              nflux=0,
              n_delay=16, n_matmul=8, n_sweep_warm=200, n_sweep_meas=2000,
              period_eqlt=8, period_uneqlt=0,
-             meas_bond_corr=0, meas_3curr=0,  meas_energy_corr=0, meas_nematic_corr=0,
+             meas_bond_corr=0, meas_3curr=0, meas_3curr_limit=0, meas_energy_corr=0, meas_nematic_corr=0,
              trans_sym=1):
     assert L % n_matmul == 0 and L % period_eqlt == 0
     N = Nx * Ny
@@ -178,6 +179,49 @@ def create_1(filename=None, overwrite=False, seed=None,
                                         map_bbb[j + N*jj, i1 + N*ii1, i2 + N*ii2] = dd
                                         degen_bbb[dd] += 1
 
+    # limited 3 bond mapping for ruling out some unnecessary measurements.
+    # Notice that this can only be used for (bps=2) where no t' appears.
+    num_bbb_lim = bps*N*N
+    map_bbb_lim = np.zeros((num_b, num_b, num_b), dtype=np.int32)
+    degen_bbb_lim = np.zeros(num_bbb_lim, dtype = np.int32)
+    for jy in range(Ny):
+        for jx in range(Nx):
+            j = jx + Nx*jy
+            for i1y in range(Ny):
+                for i1x in range(Nx):
+                    i1 = i1x + Nx*i1y
+                    d1y = (i1y - jy) % Ny
+                    d1x = (i1x - jx) % Nx
+                    d1 = d1x + Nx*d1y
+                    for i2y in range(Ny):
+                        for i2x in range(Nx):
+                            i2 = i2x + Nx*i2y
+                            d2y = (i2y - jy) % Ny
+                            d2x = (i2x - jx) % Nx
+                            d2 = d2x + Nx*d2y
+                            for jj in range(bps):
+                                for ii1 in range(bps):
+                                    for ii2 in range(bps):
+                                        dd_lim =  d2 + N*d1 + N*N*jj
+                                        # Comparing the following with the original mapping, 
+                                        # we found out that, here we actually simply rule out unnecesarry bond-bond-bond types.
+                                        if (ii1 != jj) and (ii2 != jj):
+                                            map_bbb_lim[j + N*jj, i1 + N*ii1, i2 + N*ii2] = dd_lim
+                                            degen_bbb_lim[dd_lim] += 1
+                                        else:
+                                            map_bbb_lim[j + N*jj, i1 + N*ii1, i2 + N*ii2] = -1
+                                
+    # intergral kernel  --to implement (Cubic spline fit+integral) with discrete imaginary time
+    integral_kernel = np.array([0],dtype=np.float64)
+    kernel = CubicSpline(np.arange(L+1), np.identity(L+1)).integrate(0, L)
+    integral_kernel = np.hstack((integral_kernel,kernel))
+    for i in np.arange(L-1):
+        kernel1 = CubicSpline(np.arange(i+2), np.identity(i+2)).integrate(0, i+1)
+        kernel2 = CubicSpline(np.arange(L-i), np.identity(L-i)).integrate(0, L-i-1)
+        kernel =  np.hstack((kernel1,kernel2))
+        integral_kernel = np.vstack((integral_kernel,kernel))
+    # print(integral_kernel)
+    
     # hopping (assuming periodic boundaries and no field)
     tij = np.zeros((Ny*Nx, Ny*Nx), dtype=np.complex)
     for iy in range(Ny):
@@ -277,6 +321,8 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["map_bs"] = map_bs
         f["params"]["map_bb"] = map_bb
         f["params"]["map_bbb"] = map_bbb
+        f["params"]["map_bbb_lim"] = map_bbb_lim
+        f["params"]["integral_kernel"] = integral_kernel
         f["params"]["peierlsu"] = peierls
         f["params"]["peierlsd"] = peierls
         f["params"]["Ku"] = Ku
@@ -293,6 +339,7 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["period_uneqlt"] = np.array(period_uneqlt, dtype=np.int32)
         f["params"]["meas_bond_corr"] = meas_bond_corr
         f["params"]["meas_3curr"] = meas_3curr
+        f["params"]["meas_3curr_limit"] = meas_3curr_limit
         f["params"]["meas_energy_corr"] = meas_energy_corr
         f["params"]["meas_nematic_corr"] = meas_nematic_corr
         f["params"]["init_rng"] = init_rng  # save if need to replicate data
@@ -304,11 +351,13 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["num_bs"] = num_bs
         f["params"]["num_bb"] = num_bb
         f["params"]["num_bbb"] = num_bbb
+        f["params"]["num_bbb_lim"] = num_bbb_lim
         f["params"]["degen_i"] = degen_i
         f["params"]["degen_ij"] = degen_ij
         f["params"]["degen_bs"] = degen_bs
         f["params"]["degen_bb"] = degen_bb
         f["params"]["degen_bbb"] = degen_bbb
+        f["params"]["degen_bbb_lim"] = degen_bbb_lim
         f["params"]["exp_Ku"] = exp_Ku
         f["params"]["exp_Kd"] = exp_Kd
         f["params"]["inv_exp_Ku"] = inv_exp_Ku
@@ -372,6 +421,8 @@ def create_1(filename=None, overwrite=False, seed=None,
                 f["meas_uneqlt"]["nem_ssss"] = np.zeros(num_bb*L, dtype=dtype_num)
             if meas_3curr:
                  f["meas_uneqlt"]["jjj"] = np.zeros(num_bbb*L, dtype=np.float64)
+            if meas_3curr_limit:
+                 f["meas_uneqlt"]["jjj_l"] = np.zeros(num_bbb_lim*L, dtype=np.float64)
     return filename
 
 
