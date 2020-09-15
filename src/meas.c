@@ -958,6 +958,7 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
 	for (int t = 0; t < L; t++) {
 		num factor1 = 1.0;
 		num factor2 = 1.0;
+                num factor3 = 1.0;
                 const int delta_t = (t == 0);
 		const num *const restrict Gu0t_t = Gu + N*N*(0+L*t);
 		const num *const restrict Gutt_t = Gu + N*N*(t+L*t);
@@ -1122,15 +1123,14 @@ void measure_uneqlt_full(const struct params *const restrict p, const num phase,
                                  - gdk1i0*gdi1j1*(delta_j0k0-gdj0k0) + gdk0i1*gdi0j0*(delta_j1k1-gdj1k1) + gdk0i0*gdi1j1*(delta_j0k1-gdj0k1) 
                                  + gdk1i1*gdi0j1*(delta_j0k0-gdj0k0) - gdk0i1*gdi0j1*(delta_j0k1-gdj0k1);
 		const num meas=-2*jjju -2*jjjd +part1 -part2u -part2d +part3u +part3d;
-                if((t==0)&&(dt!=0)){factor1 = 0.5; factor2 = 1;}
-                if((t!=0)&&(dt!=0)){factor1 = 1; factor2 = 1;}
-                if((t==0)&&(dt==0)){factor1 = 0; factor2 = 0.5;}
-                if((t!=0)&&(dt==0)){factor1 = 0.5; factor2 = 0.5;}
+                factor1 = p->integral_kernel[(t+dt)*(L+2) + t]; 
+                factor2 = p->integral_kernel[     t*(L+2) + (t+1+dt)]; 
+                factor3 = p->integral_kernel[(t+dt)*(L+2) + (L+1)];
                 //printf("%f\t%f\t%f\t%f\t%f\t%f\n", pre1, pre2, pre3, meas, factor1, factor2);
                 m->jjj[bbb1 + num_bbb*(t+dt)] += pre1*meas*factor1;
                 m->jjj[bbb2 + num_bbb*t] += pre2*meas*factor2;
                 if (t==0)
-                m->jjj[bbb3 + num_bbb*(t+dt)] += pre3*meas*0.5;
+                m->jjj[bbb3 + num_bbb*(t+dt)] += pre3*meas*factor3;
         }
         }
 	}
