@@ -124,6 +124,44 @@ def create_1(filename=None, overwrite=False, seed=None,
                 bonds[1, i + 2*N] = ix1 + Nx*iy1  # i1 = i + x + y
                 bonds[0, i + 3*N] = ix1 + Nx*iy   # i0 = i + x
                 bonds[1, i + 3*N] = ix + Nx*iy1   # i1 = i + y
+                
+                
+    # 2-bond definitions
+    b2ps = 12 if tp != 0.0 else 6  # 2-bonds per site
+    num_b2 = b2ps*N  # total 2-bonds in cluster
+    bond2s = np.zeros((2, num_b2), dtype=np.int32)
+    for iy in range(Ny):
+        for ix in range(Nx):
+            i = ix + Nx*iy
+            iy1 = (iy + 1) % Ny
+            ix1 = (ix + 1) % Nx
+            iy2 = (iy + 2) % Ny
+            ix2 = (ix + 2) % Nx
+            bond2s[0, i] = i            # i0 = i
+            bond2s[1, i] = ix1 + Nx*iy  # i1 = i + x
+            bond2s[0, i + N] = i            # i0 = i
+            bond2s[1, i + N] = ix + Nx*iy1  # i1 = i + y
+            bond2s[0, i + 2*N] = i             # i0 = i
+            bond2s[1, i + 2*N] = ix1 + Nx*iy1  # i1 = i + x + y
+            bond2s[0, i + 3*N] = ix1 + Nx*iy   # i0 = i + x
+            bond2s[1, i + 3*N] = ix + Nx*iy1   # i1 = i + y
+            bond2s[0, i + 4*N] = i             # i0 = i
+            bond2s[1, i + 4*N] = ix2 + Nx*iy  # i1 = i + 2x
+            bond2s[0, i + 5*N] = i   # i0 = i
+            bond2s[1, i + 5*N] = ix + Nx*iy2  # i1 = i + 2y
+            if b2ps == 12:
+                bond2s[0, i + 6*N] = i   # i0 = i
+                bond2s[1, i + 6*N] = ix2 + Nx*iy1  # i1 = i + 2x + y
+                bond2s[0, i + 7*N] = i   # i0 = i 
+                bond2s[1, i + 7*N] = ix1 + Nx*iy2   # i1 = i + x + 2y
+                bond2s[0, i + 8*N] = i   # i0 = i
+                bond2s[1, i + 8*N] = ix2 + Nx*iy2  # i1 = i + 2x + 2y
+                bond2s[0, i + 9*N] = ix2 + Nx*iy   # i0 = i + 2x
+                bond2s[1, i + 9*N] = ix + Nx*iy1  # i1 = i + y
+                bond2s[0, i + 10*N] = ix1 + Nx*iy   # i0 = i + x
+                bond2s[1, i + 10*N] = ix + Nx*iy2  # i1 = i + 2y
+                bond2s[0, i + 11*N] = ix2 + Nx*iy   # i0 = i + 2x
+                bond2s[1, i + 11*N] = ix + Nx*iy2  # i1 = i + 2y
 
     # 1 bond 1 site mapping
     map_bs = np.zeros((N, num_b), dtype=np.int32)
@@ -152,6 +190,24 @@ def create_1(filename=None, overwrite=False, seed=None,
                     degen_bb[kk] += 1
     assert num_bb == map_bb.max() + 1
 
+    # 2 2-bond mapping
+    num_b2b2 = b2ps*b2ps*N
+    map_b2b2 = np.zeros((num_b2, num_b2), dtype=np.int32)
+    degen_b2b2 = np.zeros(num_b2b2, dtype = np.int32)
+    for jy in range(Ny):
+        for jx in range(Nx):
+            for iy in range(Ny):
+                for ix in range(Nx):
+                    ky = (iy - jy) % Ny
+                    kx = (ix - jx) % Nx
+                    i = ix + Nx*iy
+                    j = jx + Nx*jy
+                    k = kx + Nx*ky
+                    for jj in range(b2ps):
+                        for ii in range(b2ps):
+                            kk =  k + N*(ii + b2ps*jj)
+                            map_b2b2[j + N*jj, i + N*ii] = kk
+                            degen_b2b2[kk] += 1
 
     # 3 bond mapping
     num_bbb = bps*bps*bps*N*N
@@ -210,6 +266,37 @@ def create_1(filename=None, overwrite=False, seed=None,
                                             degen_bbb_lim[dd_lim] += 1
                                         else:
                                             map_bbb_lim[j + N*jj, i1 + N*ii1, i2 + N*ii2] = -1
+                                            
+    
+    
+    
+    
+    # 3 2-bond mapping
+    num_b2bb2 = b2ps*bps*b2ps*N*N
+    map_b2bb2 = np.zeros((num_b2, num_b, num_b2), dtype=np.int32)
+    degen_b2bb2 = np.zeros(num_b2bb2, dtype = np.int32)
+    for jy in range(Ny):
+        for jx in range(Nx):
+            j = jx + Nx*jy
+            for i1y in range(Ny):
+                for i1x in range(Nx):
+                    i1 = i1x + Nx*i1y
+                    d1y = (i1y - jy) % Ny
+                    d1x = (i1x - jx) % Nx
+                    d1 = d1x + Nx*d1y
+                    for i2y in range(Ny):
+                        for i2x in range(Nx):
+                            i2 = i2x + Nx*i2y
+                            d2y = (i2y - jy) % Ny
+                            d2x = (i2x - jx) % Nx
+                            d2 = d2x + Nx*d2y
+                            for jj in range(b2ps):
+                                for ii1 in range(bps):
+                                    for ii2 in range(b2ps):
+                                        dd =  d2 + N*d1 + N*N*(ii2 + b2ps*ii1 + b2ps*bps*jj)
+                                        map_b2bb2[j + N*jj, i1 + N*ii1, i2 + N*ii2] = dd
+                                        degen_b2bb2[dd] += 1
+    
                                 
     # intergral kernel  --to implement (Cubic spline fit+integral) with discrete imaginary time
     integral_kernel = np.array([0],dtype=np.float64)
@@ -318,9 +405,12 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["map_i"] = map_i
         f["params"]["map_ij"] = map_ij
         f["params"]["bonds"] = bonds
+        f["params"]["bond2s"] = bond2s
         f["params"]["map_bs"] = map_bs
         f["params"]["map_bb"] = map_bb
+        f["params"]["map_b2b2"] = map_b2b2
         f["params"]["map_bbb"] = map_bbb
+        f["params"]["map_b2bb2"] = map_b2bb2
         f["params"]["map_bbb_lim"] = map_bbb_lim
         f["params"]["integral_kernel"] = integral_kernel
         f["params"]["peierlsu"] = peierls
@@ -338,6 +428,7 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["period_eqlt"] = np.array(period_eqlt, dtype=np.int32)
         f["params"]["period_uneqlt"] = np.array(period_uneqlt, dtype=np.int32)
         f["params"]["meas_bond_corr"] = meas_bond_corr
+        f["params"]["meas_thermal"] = meas_thermal
         f["params"]["meas_3curr"] = meas_3curr
         f["params"]["meas_3curr_limit"] = meas_3curr_limit
         f["params"]["meas_energy_corr"] = meas_energy_corr
@@ -348,15 +439,20 @@ def create_1(filename=None, overwrite=False, seed=None,
         f["params"]["num_i"] = num_i
         f["params"]["num_ij"] = num_ij
         f["params"]["num_b"] = num_b
+        f["params"]["num_b2"] = num_b2
         f["params"]["num_bs"] = num_bs
         f["params"]["num_bb"] = num_bb
+        f["params"]["num_b2b2"] = num_b2b2
         f["params"]["num_bbb"] = num_bbb
+        f["params"]["num_b2bb2"] = num_b2bb2
         f["params"]["num_bbb_lim"] = num_bbb_lim
         f["params"]["degen_i"] = degen_i
         f["params"]["degen_ij"] = degen_ij
         f["params"]["degen_bs"] = degen_bs
         f["params"]["degen_bb"] = degen_bb
+        f["params"]["degen_b2b2"] = degen_b2b2
         f["params"]["degen_bbb"] = degen_bbb
+        f["params"]["degen_b2bb2"] = degen_b2bb2
         f["params"]["degen_bbb_lim"] = degen_bbb_lim
         f["params"]["exp_Ku"] = exp_Ku
         f["params"]["exp_Kd"] = exp_Kd
@@ -420,9 +516,24 @@ def create_1(filename=None, overwrite=False, seed=None,
                 f["meas_uneqlt"]["nem_nnnn"] = np.zeros(num_bb*L, dtype=dtype_num)
                 f["meas_uneqlt"]["nem_ssss"] = np.zeros(num_bb*L, dtype=dtype_num)
             if meas_3curr:
-                 f["meas_uneqlt"]["jjj"] = np.zeros(num_bbb*L, dtype=np.float64)
+                 f["meas_uneqlt"]["jjj"] = np.zeros(num_bbb*L, dtype=dtype_num)
+            f meas_thermal:
+                f["meas_uneqlt"]["j2j2"] = np.zeros(num_b2b2*L, dtype=dtype_num)
+                f["meas_uneqlt"]["j2jj2"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                f["meas_uneqlt"]["jnjj2"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                f["meas_uneqlt"]["j2jjn"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                f["meas_uneqlt"]["jnjjn"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                
+                f["meas_uneqlt"]["j2jj2_1"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                f["meas_uneqlt"]["jnjj2_1"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                f["meas_uneqlt"]["j2jjn_1"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                f["meas_uneqlt"]["jnjjn_1"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                
+                f["meas_uneqlt"]["jnjj2_2"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                f["meas_uneqlt"]["j2jjn_2"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
+                f["meas_uneqlt"]["jnjjn_2"] = np.zeros(num_b2bb2*L, dtype=dtype_num)
             if meas_3curr_limit:
-                 f["meas_uneqlt"]["jjj_l"] = np.zeros(num_bbb_lim*L, dtype=np.float64)
+                 f["meas_uneqlt"]["jjj_l"] = np.zeros(num_bbb_lim*L, dtype=dtype_num)
     return filename
 
 
